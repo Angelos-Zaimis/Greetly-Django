@@ -1,0 +1,21 @@
+name: easymove-backend
+dependencies:
+  - python=3.10.9
+  - pip=22.3.1
+  - pip:
+    - django==4.1.6                         # Django web framework
+    - djangorestframework==3.14.0           # Django REST framework
+    - djangorestframework-simplejwt==5.2.2  # Library for JWT tokens
+    - drf-yasg==1.21.4                      # Automatic API documentation
+    - Markdown==3.4.1                       # Used by drf-yasg internally
+    - pillow==9.4.0                         # Python image library - needed when handling images in django
+    - django-dotenv==1.4.2                  # Load environment variables from file on app start
+    - whitenoise==6.3.0                     # Serve static files for production
+    - django-storages==1.13.2               # Used to connect to deployed external media files storages
+    - boto3==1.26.64                        # AWS SDK - allows applications to interact with service like DO Spaces or AWS S3
+    - psycopg2-binary==2.9.5                # Adapter for Python & Postgres
+    - gunicorn==20.1.0                      # Python production ready web server
+    - dj-database-url==1.2.0                # Used to connect to Postgres via Heroku URL
+    - django-cors-headers==3.13.0           # Used to allow browser connection between frontend and backend
+    - django-filter==22.1                   # Used to search
+
