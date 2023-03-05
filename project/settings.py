@@ -40,9 +40,8 @@ INSTALLED_APPS = [
 
 
     #own ,
-
+    'city',
     'custom_user',
-    'laws_regulations',
     'registration',
     'drf_yasg'
 ]
