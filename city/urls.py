@@ -1,10 +1,10 @@
 from django.urls import path
 
-from city.views import CityView
+from city.views import CityCreateAPIView
 
 
 urlpatterns = [
-    path('all/', CityView.as_view(), name="city"),
+    path('', CityCreateAPIView.as_view()),
 
 
 ]
