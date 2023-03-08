@@ -7,9 +7,10 @@ def get_image_path(instance, filename):
 
 
 class City(models.Model):
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     population = models.CharField(max_length=100)
     image = models.ImageField(null=True, blank=True, upload_to=get_image_path)
 
     def __str__(self):
-        return f"City: {self.name}"
+        return f"City ({self.id}): {self.name}"
