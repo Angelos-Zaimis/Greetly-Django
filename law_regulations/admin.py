@@ -1,4 +1,4 @@
 from django.contrib import admin
-from law_regulations.models import ResidencyPermit
+from law_regulations.models import ImmigrationLawsAndRegulations
 # Register your models here.
-admin.site.register(ResidencyPermit)
+admin.site.register(ImmigrationLawsAndRegulations)

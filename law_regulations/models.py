@@ -4,10 +4,11 @@ from django.db import models
 from django.db import models
 from city.models import City
 # Create your models here.
-class ResidencyPermit(models.Model):
+class ImmigrationLawsAndRegulations(models.Model):
     city = models.ForeignKey(City, on_delete=models.CASCADE)
-    requirements = models.CharField(max_length=200)
+    title = models.CharField(max_length=200, default='Immigration laws and regulations')
+
 
     def __str__(self):
-        return f"Permit {self.requirements}"
+        return f"Permit {self.title} of {self.city}"
 
