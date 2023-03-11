@@ -5,7 +5,7 @@ from django.db import models
 from city.models import City
 # Create your models here.
 class ImmigrationLawsAndRegulations(models.Model):
-    city = models.ForeignKey(City, on_delete=models.CASCADE)
+    city = models.ForeignKey(City, on_delete=models.CASCADE,related_name='ImmigrationLawsAndRegulations')
     title = models.CharField(max_length=200, default='Immigration laws and regulations')
 
 

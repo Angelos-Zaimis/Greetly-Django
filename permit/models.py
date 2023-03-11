@@ -5,7 +5,7 @@ from city.models import City
 
 
 class Permit(models.Model):
-    city = models.ForeignKey(City, on_delete=models.CASCADE)
+    city = models.ForeignKey(City, on_delete=models.CASCADE,related_name='Permit')
     title = models.CharField(max_length=200, default='permit process and requirements')
 
     def __str__(self):

@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'law_regulations',
     'custom_user',
     'registration',
-    'drf_yasg'
+    'drf_yasg',
+    'permit'
 ]
 
 AUTH_USER_MODEL = 'custom_user.User'
