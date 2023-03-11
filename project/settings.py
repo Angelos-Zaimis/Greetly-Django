@@ -45,7 +45,11 @@ INSTALLED_APPS = [
     'custom_user',
     'registration',
     'drf_yasg',
-    'permit'
+    'permit',
+    'moneybanking',
+    'healthcare',
+    'employment',
+    'housing'
 ]
 
 AUTH_USER_MODEL = 'custom_user.User'
