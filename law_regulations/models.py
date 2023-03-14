@@ -12,6 +12,7 @@ def get_image_path(instance, filename):
 class ImmigrationLawsAndRegulations(models.Model):
     city = models.ForeignKey(City, on_delete=models.CASCADE,related_name='ImmigrationLawsAndRegulations')
     title = models.CharField(max_length=200, default='Legal system & immigration')
+    titleEs = models.CharField(max_length=200, default='Sistema legal y migración')
     icon = models.ImageField(null=True, blank=True, upload_to=get_image_path)
     description = models.CharField(max_length=200, default='Immigration and legal support,police')
 
