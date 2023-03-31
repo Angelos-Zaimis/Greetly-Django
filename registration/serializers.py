@@ -15,11 +15,12 @@ class RegisterSerializer(serializers.ModelSerializer):
     write_only=True,
     style={'input_type': 'password'})
     email = serializers.EmailField(validators=[EmailValidator(message="Invalid Email address")])
-
+    selectedCitizenship = serializers.CharField(required=True)
+    status = serializers.CharField(required=True)
 
     class Meta:
         model = Registration
-        fields = ['email','password']
+        fields = ['email','password','selectedCitizenship','status']
 
 
     def create(self, validated_data):
@@ -28,3 +29,13 @@ class RegisterSerializer(serializers.ModelSerializer):
         # Create a new registration instance with the user and verification code
         registration = Registration.objects.create(user=user)
         return registration
+
+
+
+class VerifyRegistrationSerializer(serializers.Serializer):
+    verification_code = serializers.IntegerField(required=True)
+
+
+    class Meta:
+        model =Registration
+        fields = ['verification_code']
