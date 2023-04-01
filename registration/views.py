@@ -1,8 +1,11 @@
+import json
+
 from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.shortcuts import render
 from requests import Response
 from rest_framework import generics, status
+from rest_framework.exceptions import ValidationError
 from rest_framework.views import APIView
 
 from .models import Registration
@@ -20,7 +23,12 @@ class RegistrationView(generics.GenericAPIView):
     def post(self, request):
         user = request.data
         serializer = self.serializer_class(data=user)
-        serializer.is_valid(raise_exception=True)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except ValidationError as e:
+            errors = json.dumps(e.detail)
+            return HttpResponse(errors, status=status.HTTP_400_BAD_REQUEST)
+
         registration = serializer.save()
 
         email_body = f"Welcome to HelloCH {registration.user.username.capitalize()}! \n" \
@@ -36,8 +44,7 @@ class RegistrationView(generics.GenericAPIView):
         )
 
         data = {'message': 'Check your email to verify your account'}
-        return HttpResponse(data)
-
+        return HttpResponse(data, status=status.HTTP_201_CREATED)
 
 class VerifyRegistrationView(APIView):
     serializer_class = VerifyRegistrationSerializer
