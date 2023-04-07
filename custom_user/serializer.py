@@ -1,8 +1,7 @@
 import socket
 from rest_framework import serializers
-from registration.models import Registration
 from django.contrib.auth.password_validation import validate_password
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator
 import re
@@ -43,17 +42,10 @@ def custom_email_validator(value):
     if len(value) > 254:
         raise ValidationError('Email address is too long')
 
-    # Check if email already exists
-    if User.objects.filter(email=value).exists():
-        raise ValidationError('Email address already exists')
-
-    # Check if email is disposable or spam
-    # (This is just an example, you would need to use a third-party service or database to check for these)
     if value.endswith('@example.com'):
         raise ValidationError('Email address is a known disposable address')
     if value.endswith('@spamdomain.com'):
         raise ValidationError('Email address is a known spam address')
-
 
 def custom_password_validator(value):
     """
@@ -72,33 +64,23 @@ def custom_password_validator(value):
         raise ValidationError('Password must contain at least one special character.')
     # Add more custom password validation rules as needed
 
-
-class RegisterSerializer(serializers.ModelSerializer):
-
-
+class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(validators=[custom_email_validator])
     password = serializers.CharField(validators=[validate_password, custom_password_validator])
-    selectedCitizenship = serializers.CharField(required=True)
-    status = serializers.CharField(required=True)
 
     class Meta:
-        model = Registration
-        fields = ['email','password','selectedCitizenship','status']
+        model = User
+        fields = ['email', 'password']
 
+    def validate(self, data):
+        email = data.get('email')
+        password = data.get('password')
 
-    def create(self, validated_data):
-        # Create a new user instance with the email and password
-        user = User.objects.create_user(username=validated_data['email'],email=validated_data['email'], password=validated_data['password'])
-        # Create a new registration instance with the user and verification code
-        registration = Registration.objects.create(user=user)
-        return registration
+        # Authenticate the user with the provided credentials
+        user = authenticate(email=email, password=password)
+        if not user:
+            raise serializers.ValidationError('Invalid email or password')
 
-
-
-class VerifyRegistrationSerializer(serializers.Serializer):
-    verification_code = serializers.IntegerField(required=True)
-
-
-    class Meta:
-        model =Registration
-        fields = ['verification_code']
+        # Add the authenticated user to the validated data dictionary
+        data['user'] = user
+        return data
