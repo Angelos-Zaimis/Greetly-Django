@@ -17,7 +17,7 @@ class Registration(models.Model):
     verification_code = models.IntegerField(default=generate_code)
     email = models.EmailField(default='')
     password = models.CharField(max_length=20, default='')
-    selectedCitizenship = models.CharField(max_length=200, default='')
+    selectedCountry = models.CharField(max_length=200, default='')
     status = models.CharField(max_length=200, default='')
 
     def __str__(self):

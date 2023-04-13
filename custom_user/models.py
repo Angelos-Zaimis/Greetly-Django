@@ -14,6 +14,5 @@ class User(AbstractUser):
     selectedCitizenship = models.CharField(max_length=200, default='')
     status = models.CharField(max_length=200, default='')
 
-
     def __str__(self):
         return f"ID: {self.id} email: {self.email}"

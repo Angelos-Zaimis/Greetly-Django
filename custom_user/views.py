@@ -41,7 +41,9 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             'message': 'Successful login.',
             'username': user.email,
             'token': token,
-            'first_login': is_first_login
+            'first_login': is_first_login,
+            'status': user.status,
+            'citizenship': user.selectedCitizenship
         }
 
         return HttpResponse(json.dumps(data), content_type='application/json', status=200)

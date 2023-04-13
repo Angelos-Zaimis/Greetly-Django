@@ -13,16 +13,13 @@ from rest_framework.exceptions import ValidationError
 # Create your views here.
 
 
-
 class RegistrationView(generics.GenericAPIView):
     serializer_class = RegisterSerializer
 
     def post(self, request):
-        user = request.data
-        serializer = self.serializer_class(data=user)
+        user_data = request.data
+        serializer = self.serializer_class(data=user_data)
         serializer.is_valid(raise_exception=True)
-
-
         registration = serializer.save()
 
         email_body = f"Welcome to Hello.CH {registration.user.email}! \n" \
@@ -39,7 +36,6 @@ class RegistrationView(generics.GenericAPIView):
 
         data = {'Check your email to verify your account!!!'}
         return HttpResponse(data)
-
 
 class VerifyRegistrationView(APIView):
     serializer_class = VerifyRegistrationSerializer

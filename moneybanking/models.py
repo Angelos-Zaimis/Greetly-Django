@@ -25,6 +25,9 @@ class MoneyBanking(models.Model):
     descriptionFr = models.CharField(max_length=200, default='Ouverture d un compte bancaire,Déclaration fiscale')
     descriptionGr = models.CharField(max_length=200, default='Άνοιγμα τραπεζικού λογαριασμού,Υποβολή φορολογικής δήλωσης')
     descriptionGe = models.CharField(max_length=200, default='Eröffnung eines Bankkontos,Einreichung der Steuererklärung')
+
+
+
     def __str__(self):
         return f"permit {self.title} of {self.city}"
 
