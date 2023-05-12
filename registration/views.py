@@ -1,7 +1,7 @@
+import json
+
 from django.core.mail import send_mail
 from django.http import HttpResponse
-from django.shortcuts import render
-from requests import Response
 from rest_framework import generics, status
 from rest_framework.views import APIView
 
@@ -34,8 +34,14 @@ class RegistrationView(generics.GenericAPIView):
             fail_silently=False
         )
 
-        data = {'Check your email to verify your account!!!'}
-        return HttpResponse(data)
+
+        data = {
+            'user': registration.user.email,
+            'message': 'Successful Registration.',
+        }
+
+        return HttpResponse(json.dumps(data), content_type='application/json', status=status.HTTP_200_OK)
+
 
 class VerifyRegistrationView(APIView):
     serializer_class = VerifyRegistrationSerializer

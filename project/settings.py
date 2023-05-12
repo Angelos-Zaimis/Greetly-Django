@@ -39,17 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
 
-    #own ,
-    'city',
-    'law_regulations',
     'custom_user',
     'registration',
     'drf_yasg',
-    'permit',
-    'moneybanking',
-    'healthcare',
-    'employment',
-    'housing'
+    'zurich',
+
 ]
 
 AUTH_USER_MODEL = 'custom_user.User'

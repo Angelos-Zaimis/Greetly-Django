@@ -7,9 +7,19 @@ from django.core.validators import EmailValidator
 from rest_framework import serializers
 
 from registration.countries import EFTA_COUNTRIES, NON_EU_EFTA_COUNTRIES, EU_COUNTRIES
+from registration.languages import COUNTRY_LANGUAGES
 from registration.models import Registration
 
+import pycountry
+
 User = get_user_model()
+
+
+def get_language(country):
+    for item in COUNTRY_LANGUAGES:
+        if item['country'] == country:
+            return item['language']
+    return None  # Return None if country not found in the array
 
 def custom_email_validator(value):
 
@@ -78,8 +88,11 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
 
+
         country = validated_data.get('selectedCountry')
+
         citizenship = None
+
         if country:
             if country.upper() in EU_COUNTRIES:
                 citizenship = 'EU'
@@ -90,15 +103,20 @@ class RegisterSerializer(serializers.ModelSerializer):
             else:
                 raise serializers.ValidationError('Invalid country')
 
+
+
+
         user = User.objects.create_user(username=validated_data['email'],
                                         email=validated_data['email'],
                                         password=validated_data['password'],
                                         status=validated_data['status'],
-                                        selectedCitizenship=citizenship
+                                        selectedCitizenship=citizenship,
+                                        language=get_language(country)
                                         )
         # Create a new registration instance with the user and verification code
         registration = Registration.objects.create(user=user)
         return registration
+
 
 class VerifyRegistrationSerializer(serializers.Serializer):
     verification_code = serializers.IntegerField(required=True)
