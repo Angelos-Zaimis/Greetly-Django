@@ -6,11 +6,9 @@ from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator
 from rest_framework import serializers
 
-from registration.countries import EFTA_COUNTRIES, NON_EU_EFTA_COUNTRIES, EU_COUNTRIES
+from registration.countries import NON_EU_EFTA_COUNTRIES, EU_COUNTRIES,UK_COUNTRIES
 from registration.languages import COUNTRY_LANGUAGES
 from registration.models import Registration
-
-import pycountry
 
 User = get_user_model()
 
@@ -19,7 +17,7 @@ def get_language(country):
     for item in COUNTRY_LANGUAGES:
         if item['country'] == country:
             return item['language']
-    return None  # Return None if country not found in the array
+    return 'English'
 
 def custom_email_validator(value):
 
@@ -95,11 +93,11 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         if country:
             if country.upper() in EU_COUNTRIES:
-                citizenship = 'EU'
-            elif country.upper() in EFTA_COUNTRIES:
-                citizenship = 'EFTA'
+                citizenship = 'EU/EFTA'
             elif country.upper() in NON_EU_EFTA_COUNTRIES:
-                citizenship = 'NON-EU-EFTA'
+                citizenship = 'NON-EU/EFTA'
+            elif country.upper() in UK_COUNTRIES:
+                citizenship = 'UK-COUNTRIES'
             else:
                 raise serializers.ValidationError('Invalid country')
 

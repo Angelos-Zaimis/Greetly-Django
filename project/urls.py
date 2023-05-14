@@ -56,7 +56,8 @@ urlpatterns = [
          name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc',
                                        cache_timeout=0), name='schema-redoc'),
-
+    # GET CITY , CATEGORY,INFORMATION
+    path('api/cities/', include('Cities.urls')),
 
 ]
 if settings.DEBUG:

@@ -13,7 +13,7 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ['username', 'password']
     selectedCitizenship = models.CharField(max_length=200, default='')
     status = models.CharField(max_length=200, default='')
-    language = models.CharField(max_length=200, default='')
+    language = models.CharField(max_length=200, null=True)
 
     def __str__(self):
         return f"ID: {self.id} email: {self.email}"

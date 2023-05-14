@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'custom_user',
     'registration',
     'drf_yasg',
-    'zurich',
+    'Cities'
+
 
 ]
 
