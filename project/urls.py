@@ -26,7 +26,7 @@ from django.conf import settings
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="EasyMove API",
+        title="Hello.ch API",
         default_version='v1',
         description="Backend-API",
         terms_of_service="https://www.google.com/policies/terms/",

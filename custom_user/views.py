@@ -31,7 +31,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         payload = {
             'user_id': user.id,
             'email': user.email,
-            'exp': datetime.utcnow() + timedelta(minutes=60)  # token expires in 60 minutes
+            'exp': datetime.utcnow() # token expires in 60 minutes
         }
         access_token = jwt.encode(payload, 'SECRET_KEY')
 
@@ -39,7 +39,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             'user_id': user.id,
             'email': user.email,
             'type': 'refresh',
-            'exp': datetime.utcnow() + timedelta(minutes=120)
+            'exp': datetime.utcnow()
         }
 
         refresh_token = jwt.encode(refresh_payload,'SECRET_KEY',algorithm='HS256')
