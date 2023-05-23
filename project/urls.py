@@ -20,7 +20,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework_simplejwt import views as jwt_views
-from custom_user.views import CustomTokenObtainPairView
+from custom_user.views import CustomTokenObtainPairView,LanguageProvider
 from django.conf import settings
 
 
@@ -58,6 +58,8 @@ urlpatterns = [
                                        cache_timeout=0), name='schema-redoc'),
     # GET CITY , CATEGORY,INFORMATION
     path('api/cities/', include('Cities.urls')),
+
+    path('api/language/', LanguageProvider.as_view(), name='get_language')
 
 ]
 if settings.DEBUG:

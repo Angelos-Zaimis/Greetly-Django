@@ -47,6 +47,7 @@ def custom_email_validator(value):
     if value.endswith('@spamdomain.com'):
         raise ValidationError('Email address is a known spam address')
 
+
 def custom_password_validator(value):
     """
     Check that the password meets custom requirements.
@@ -64,13 +65,14 @@ def custom_password_validator(value):
         raise ValidationError('Password must contain at least one special character.')
     # Add more custom password validation rules as needed
 
+
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(validators=[custom_email_validator])
     password = serializers.CharField(validators=[validate_password, custom_password_validator])
 
     class Meta:
         model = User
-        fields = ['email', 'password','status','selectedCitizenship']
+        fields = ['email', 'password', 'status', 'selectedCitizenship']
 
     def validate(self, data):
         email = data.get('email')
@@ -84,3 +86,20 @@ class UserSerializer(serializers.ModelSerializer):
         # Add the authenticated user to the validated data dictionary
         data['user'] = user
         return data
+
+
+class LanguageSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+
+    class Meta:
+        model = User
+        fields = '__all__'
+
+
+class LanguageSerializerPut(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    language = serializers.CharField(required=True)
+
+    class Meta:
+        model = User
+        fields = '__all__'
