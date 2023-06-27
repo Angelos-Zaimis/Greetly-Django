@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from Cities.models import City,Category,Information
+from Cities.models import City,Category,SubCategory,Information
 
 class CitySerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,7 +14,14 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = '__all__'
 
+class SubCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubCategory
+        fields = '__all__'
+
+
+
 class InformationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Information
-        fields = '__all__'
+        fields = ['title', 'description', 'image', 'requiredDocuments']

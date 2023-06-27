@@ -1,10 +1,11 @@
-from rest_framework import status, generics, viewsets
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, get_object_or_404, ListAPIView
+from django.conf import settings
+from rest_framework import viewsets
+from rest_framework.generics import get_object_or_404, ListAPIView
+from .serializers import CitySerializer, SubCategorySerializer,CategorySerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from Cities.models import City, Information,Category
-from .serializers import CitySerializer, InformationSerializer ,CategorySerializer
-
+from .models import City, Category, SubCategory, Information
+from .serializers import InformationSerializer
 
 
 class GetCitiesView(ListAPIView):
@@ -15,10 +16,10 @@ class GetCitiesView(ListAPIView):
 
 
 class InformationViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = InformationSerializer
+    serializer_class = SubCategory
 
     def retrieve(self, request, city=None, category=None, information=None):
-        queryset = Information.objects.filter(
+        queryset = SubCategory.objects.filter(
             category__city__name=city,
             category__name=category,
             title=information
@@ -34,21 +35,98 @@ class CityCategoriesAPIView(APIView):
         try:
             city_obj = City.objects.get(name=city)
             categories = Category.objects.filter(city=city_obj)
-            category_names = [category.name for category in categories]
-            return Response(category_names)
+            category_data = []
+            for category in categories:
+                image_url = None
+                icon_url = None  # Initialize icon_url with a default value
+                if category.image:
+                    current_site = get_current_site(request)
+                    protocol = 'https' if request.is_secure() else 'http'
+                    image_url = f"{protocol}://{current_site}{category.image.url}"
+                if category.icon:
+                    current_site = get_current_site(request)
+                    protocol = 'https' if request.is_secure() else 'http'
+                    icon_url = f"{protocol}://{current_site}{category.icon.url}"
+                category_data.append({
+                    'name': category.name,
+                    'image': image_url,
+                    'icon': icon_url,
+                    'description': category.description
+                })
+
+            return Response(category_data)
         except City.DoesNotExist:
             return Response("City not found", status=404)
 
 
-class CityCategoryInformationAPIView(APIView):
+from django.contrib.sites.shortcuts import get_current_site
+
+
+class CityCategorySubCategoriesAPIView(APIView):
     def get(self, request, city, category):
         try:
             city_obj = City.objects.get(name=city)
             category_obj = Category.objects.get(name=category, city=city_obj)
-            # Assuming you have an 'Information' model related to categories
-            information = Information.objects.filter(category=category_obj)
-            # Serialize the information data if needed
-            serialized_information = InformationSerializer(information, many=True).data
-            return Response(serialized_information)
+            subcategories = SubCategory.objects.filter(category=category_obj)
+            serialized_subcategories = SubCategorySerializer(subcategories, many=True).data
+
+            current_site = get_current_site(request)
+            protocol = 'https' if request.is_secure() else 'http'
+
+            # Add "http://" or "https://" prefix to image URLs
+            for subcategory in serialized_subcategories:
+                if 'image' in subcategory:
+                    image_url = f"{protocol}://{current_site}{subcategory['image']}"
+                    subcategory['image'] = image_url
+
+            return Response(serialized_subcategories)
         except (City.DoesNotExist, Category.DoesNotExist):
             return Response("City or Category not found", status=404)
+
+    def put(self, request, city, category):
+        city_obj = get_object_or_404(City, name=city)
+        category_obj = get_object_or_404(Category, name=category, city=city_obj)
+
+        # Process the PUT request to change the category
+
+        # Retrieve the new subcategories for the updated category
+        subcategories = SubCategory.objects.filter(category=category_obj)
+        serialized_subcategories = SubCategorySerializer(subcategories, many=True).data
+
+        current_site = get_current_site(request)
+        protocol = 'https' if request.is_secure() else 'http'
+
+        # Add "http://" or "https://" prefix to image URLs
+        for subcategory in serialized_subcategories:
+            if 'image' in subcategory:
+                image_url = f"{protocol}://{current_site}{subcategory['image']}"
+                subcategory['image'] = image_url
+
+        return Response(serialized_subcategories)
+
+
+
+
+from urllib.parse import unquote
+
+class InformationView(APIView):
+    def get(self, request, city, category, subcategory, information):
+        try:
+            city_obj = City.objects.get(name=city)
+            category_obj = Category.objects.get(name=category, city=city_obj)
+            subcategory_obj = SubCategory.objects.get(title=subcategory, category=category_obj)
+
+            # Filter information based on exact title match
+            information_obj = Information.objects.get(subcategory=subcategory_obj, title=information)
+
+            # Get the complete image URL
+            current_site = get_current_site(request)
+            protocol = 'https' if request.is_secure() else 'http'
+            image_url = f"{protocol}://{current_site}{unquote(str(information_obj.image))}"
+            information_obj.image = image_url
+
+            serializer = InformationSerializer(information_obj)
+            return Response(serializer.data)
+
+        except (City.DoesNotExist, Category.DoesNotExist, SubCategory.DoesNotExist, Information.DoesNotExist):
+            return Response({"error": "Information not found."}, status=404)
