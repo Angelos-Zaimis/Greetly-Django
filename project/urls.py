@@ -26,7 +26,7 @@ from django.conf import settings
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Hello.ch API",
+        title="middleware-informations",
         default_version='v1',
         description="Backend-API",
         terms_of_service="https://www.google.com/policies/terms/",
@@ -59,7 +59,15 @@ urlpatterns = [
     # GET CITY , CATEGORY,INFORMATION
     path('api/cities/', include('Cities.urls')),
 
-    path('api/language/', LanguageProvider.as_view(), name='get_language')
+    # LANGUAGE
+    path('api/language/', LanguageProvider.as_view(), name='get_language'),
+
+    # TEAM MEMBERS
+    path('api/teamMembers/', include('teamMembers.urls')),
+
+    #
+    path('api/bookmarks/', include('bookmark.urls'))
+
 
 ]
 if settings.DEBUG:

@@ -47,7 +47,9 @@ INSTALLED_APPS = [
     'custom_user',
     'registration',
     'drf_yasg',
-    'Cities'
+    'Cities',
+    'teamMembers',
+    'bookmark'
 
 
 ]

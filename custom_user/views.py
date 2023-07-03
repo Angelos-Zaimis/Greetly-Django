@@ -46,6 +46,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
         refresh_token = jwt.encode(refresh_payload, 'SECRET_KEY', algorithm='HS256')
         data = {
+            'id': user.id,
             'user': user.email,
             'message': 'Successful login.',
             'username': user.email,
