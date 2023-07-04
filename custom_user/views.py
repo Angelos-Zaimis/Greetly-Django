@@ -57,7 +57,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             'first_login': is_first_login,
             'status': user.status,
             'citizenship': user.selectedCitizenship,
-            'language': user.language
+            'language': user.language,
+            'country': user.country
         }
 
         return HttpResponse(json.dumps(data), content_type='application/json', status=200)

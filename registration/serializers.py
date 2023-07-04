@@ -109,6 +109,7 @@ class RegisterSerializer(serializers.ModelSerializer):
                                         password=validated_data['password'],
                                         status=validated_data['status'],
                                         selectedCitizenship=citizenship,
+                                        country=country,
                                         language=get_language(country)
                                         )
         # Create a new registration instance with the user and verification code
