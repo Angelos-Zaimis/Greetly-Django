@@ -20,7 +20,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework_simplejwt import views as jwt_views
-from custom_user.views import CustomTokenObtainPairView,LanguageProvider
+from custom_user.views import CustomTokenObtainPairView,UserProvider
 from django.conf import settings
 
 
@@ -60,7 +60,7 @@ urlpatterns = [
     path('api/cities/', include('Cities.urls')),
 
     # LANGUAGE
-    path('api/language/', LanguageProvider.as_view(), name='get_language'),
+    path('api/userInfo/', UserProvider.as_view(), name='get_userinfo'),
 
     # TEAM MEMBERS
     path('api/teamMembers/', include('teamMembers.urls')),

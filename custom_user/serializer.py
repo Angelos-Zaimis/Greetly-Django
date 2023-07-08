@@ -88,7 +88,7 @@ class UserSerializer(serializers.ModelSerializer):
         return data
 
 
-class LanguageSerializer(serializers.Serializer):
+class UserInfosSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
 
     class Meta:
@@ -98,7 +98,9 @@ class LanguageSerializer(serializers.Serializer):
 
 class LanguageSerializerPut(serializers.Serializer):
     email = serializers.EmailField(required=True)
-    language = serializers.CharField(required=True)
+    language = serializers.CharField(required=False)
+    country = serializers.CharField(required=False)
+    status = serializers.CharField(required=False)
 
     class Meta:
         model = User

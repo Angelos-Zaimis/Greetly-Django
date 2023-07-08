@@ -6,10 +6,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import get_user_model
-from custom_user.serializer import UserSerializer,LanguageSerializer,LanguageSerializerPut
+from custom_user.serializer import UserSerializer,UserInfosSerializer,LanguageSerializerPut
 import jwt
 from datetime import datetime, timedelta
 from django.contrib.auth.mixins import LoginRequiredMixin
+
+from registration.countries import EU_COUNTRIES, NON_EU_EFTA_COUNTRIES, UK_COUNTRIES
+
 User = get_user_model()
 
 
@@ -63,18 +66,47 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
         return HttpResponse(json.dumps(data), content_type='application/json', status=200)
 
+    def put(self, request, *args, **kwargs):
+        user = request.user
+        serializer = self.serializer_class(user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
 
+        data = {
+            'id': user.id,
+            'user': user.email,
+            'message': 'User updated successfully.',
+            'username': user.email,
+            # Include any other fields you want to return
+            'status': user.status,
+            'citizenship': user.selectedCitizenship,
+            'language': user.language,
+            'country': user.country
+        }
 
-class LanguageProvider(APIView):
+        return Response(data, status=status.HTTP_200_OK)
+
+class UserProvider(APIView):
     def get(self, request):
-        serializer = LanguageSerializer(data=request.query_params)
+        serializer = UserInfosSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data['email']
 
         try:
             user = User.objects.get(email=email)
-            language = user.language  # Assuming the language is stored in the user's profile model
-            return HttpResponse(json.dumps(language))
+            data = {
+                'id': user.id,
+                'user': user.email,
+                'message': 'User updated successfully.',
+                'username': user.email,
+                # Include any other fields you want to return
+                'status': user.status,
+                'citizenship': user.selectedCitizenship,
+                'language': user.language,
+                'country': user.country
+            }
+              # Assuming the language is stored in the user's profile model
+            return HttpResponse(json.dumps(data))
         except User.DoesNotExist:
             return HttpResponse(status=404, content='User not found')
 
@@ -82,12 +114,31 @@ class LanguageProvider(APIView):
         serializer = LanguageSerializerPut(data=request.data)
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data['email']
-        language = serializer.validated_data['language']
+        language = serializer.validated_data.get('language')
+        country = serializer.validated_data.get('country')
+        status = serializer.validated_data.get('status')
 
         try:
             user = User.objects.get(email=email)
-            user.language = language  # Assuming language is a field in the user's profile model
+
+            if language:
+                user.language = language
+
+            if status:
+                user.status = status
+
+            if country:
+                user.country = country
+                if country:
+                    if country.upper() in EU_COUNTRIES:
+                        citizenship = 'EU/EFTA'
+                    elif country.upper() in NON_EU_EFTA_COUNTRIES:
+                        citizenship = 'NON-EU/EFTA'
+                    elif country.upper() in UK_COUNTRIES:
+                        citizenship = 'UK-COUNTRIES'
+                user.selectedCitizenship = citizenship
+
             user.save()
-            return HttpResponse(content='Language updated successfully',status=status.HTTP_200_OK,)
+            return HttpResponse(content='Property updated successfully')
         except User.DoesNotExist:
-            return HttpResponse( content='User not found', status=status.HTTP_404_NOT_FOUND)
+            return HttpResponse(content='User not found', status=status.HTTP_404_NOT_FOUND)
