@@ -62,10 +62,13 @@ urlpatterns = [
     # LANGUAGE
     path('api/userInfo/', UserProvider.as_view(), name='get_userinfo'),
 
+    # TRANSLATE IMAGES
+    path('api/translate-image/', include('image.urls')),
+
     # TEAM MEMBERS
     path('api/teamMembers/', include('teamMembers.urls')),
 
-    #
+    # BOOKMARKS
     path('api/bookmarks/', include('bookmark.urls'))
 
 

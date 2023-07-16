@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'drf_yasg',
     'Cities',
     'teamMembers',
-    'bookmark'
+    'bookmark',
+    'image'
 
 
 ]

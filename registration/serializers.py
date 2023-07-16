@@ -93,9 +93,9 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         if country:
             if country.upper() in EU_COUNTRIES:
-                citizenship = 'EU/EFTA'
+                citizenship = 'EU-EFTA'
             elif country.upper() in NON_EU_EFTA_COUNTRIES:
-                citizenship = 'NON-EU/EFTA'
+                citizenship = 'NON-EU-EFTA'
             elif country.upper() in UK_COUNTRIES:
                 citizenship = 'UK-COUNTRIES'
             else:

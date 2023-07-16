@@ -66,6 +66,23 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
         return HttpResponse(json.dumps(data), content_type='application/json', status=200)
 
+    def delete(self, request, *args, **kwargs):
+        username = request.data.get('email')
+        try:
+            user = User.objects.get(email=username)
+            user.delete()
+            data = {
+                'message': 'User deleted successfully.'
+            }
+            return HttpResponse(json.dumps(data), content_type='application/json', status=200)
+
+        except User.DoesNotExist:
+            data = {
+                'message': 'User not found.'
+            }
+            return HttpResponse(json.dumps(data), content_type='application/json', status=404)
+
+
     def put(self, request, *args, **kwargs):
         user = request.user
         serializer = self.serializer_class(user, data=request.data, partial=True)
@@ -131,9 +148,9 @@ class UserProvider(APIView):
                 user.country = country
                 if country:
                     if country.upper() in EU_COUNTRIES:
-                        citizenship = 'EU/EFTA'
+                        citizenship = 'EU-EFTA'
                     elif country.upper() in NON_EU_EFTA_COUNTRIES:
-                        citizenship = 'NON-EU/EFTA'
+                        citizenship = 'NON-EU-EFTA'
                     elif country.upper() in UK_COUNTRIES:
                         citizenship = 'UK-COUNTRIES'
                 user.selectedCitizenship = citizenship
