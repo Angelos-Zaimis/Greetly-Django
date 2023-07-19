@@ -16,18 +16,19 @@ class GetCitiesView(ListAPIView):
 
 
 class InformationViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = SubCategory
+    serializer_class = InformationSerializer
 
     def retrieve(self, request, city=None, category=None, information=None):
-        queryset = SubCategory.objects.filter(
-            category__city__name=city,
-            category__name=category,
+        queryset = Information.objects.filter(
+            subcategory__category__city__name=city,
+            subcategory__category__name=category,
             title=information
         )
         information_instance = get_object_or_404(queryset)
 
         serializer = self.get_serializer(information_instance)
         return Response(serializer.data)
+
 
 
 class CityCategoriesAPIView(APIView):

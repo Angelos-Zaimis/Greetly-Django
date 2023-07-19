@@ -43,14 +43,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
-
+    'drf_yasg',
     'custom_user',
     'registration',
-    'drf_yasg',
     'Cities',
     'teamMembers',
     'bookmark',
-    'image'
+    'Translation',
+
 
 
 ]

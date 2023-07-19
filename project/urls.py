@@ -59,11 +59,10 @@ urlpatterns = [
     # GET CITY , CATEGORY,INFORMATION
     path('api/cities/', include('Cities.urls')),
 
+    path('api/translateImage/', include('Translation.urls')),
+
     # LANGUAGE
     path('api/userInfo/', UserProvider.as_view(), name='get_userinfo'),
-
-    # TRANSLATE IMAGES
-    path('api/translate-image/', include('image.urls')),
 
     # TEAM MEMBERS
     path('api/teamMembers/', include('teamMembers.urls')),

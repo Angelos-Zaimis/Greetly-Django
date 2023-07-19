@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "keen-vigil-383820",
+  "private_key_id": "46dc25d4bc6e419ad415a84a3db0b9e10505ad81",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC6mYayLUm8GSuV\n617N8umuZKSjv7HREGMBQw9YmjwYsOS62hgeFMyKf6absJE7dAPj6Uhk2h50dJXp\nu+GnmWJo4ByM/G9hDvq8p7lnAcV9SvVb2XDFY52N9f/+d9hBvPiY4BNtO12VAKug\nR9wRM7RT5fEYxWbPfPe9/wJgGsNNVPhwBW6plYE9V2FuHbMal429fsZkVDwyzd3T\nClINEMsPvOA7H95DHWc+18VsHUiZHkA4jsn5y31ksnyDaO4SQNqcD5ZIBHI/oJr5\nUG0mojQng3HuOlffBKoxxLiws9edZTRfRWQE5Cp7QTyVVER2cxyg5LyjsDmwIwsE\nzM5enLE7AgMBAAECggEAHlToZTwhWTcKM7Nv1LBgtd1cOdXmNKKiRUk+TFu92xGe\nDJV5CCK/YOABGBuqb+ya2UhJYUNnYey1lanZs2Gmcn/DhFNgU3mY3mOxKoJKNOSj\nX4vH3f4kVTggpZ+bgowSKN97qOzWeGsEeuhTaGRsMpsVBr7HyIB60OKL401WY9Jd\nb7fIZ4GT0Fi+82jWQQb7f7A64n0ugA/9OkRiW5woj1+gMSZrnZoEqzxtl7piTZUB\nDBh/dO2ooNSHz8PHWbpOqPkscFGhs9YqofjV1bcNiJ6BS0ut6GfeYMyRLJHvhjc3\n3uYdXn6lwPkZzdXBiqSpJytRdcCN8YG/8geipfNykQKBgQD4fkZ4iwkuORTqHjDd\nNiE831VS9LeijV2hLnNTytTHNZUqLA+4rwXOCjLrBABge0ef76sM9gG6a+r13o1A\nKdZfQle96rsDQ+VDs0CoTdDKTiVo2S5zbmfZ41spnSltvaEkTydKJIn9SIssxDhJ\nV9wqQ7DToSswKtjPLyGTinu3gwKBgQDAPJi5uRcwxkt4cBuC6tlDFQG22V6gAi99\nsChvwZv3RXK4wXPzyUHQZfPrJwOZ/kdQvYvFukyYi7MoDTvS4Qv1nMSeoW+887Vr\nBg5th6UL8dRpyXI8Ddn0Bicvvi5A02uUTTRGajFFKnjcWCxDx2zTXlImW9d+gEZg\nwFDJH/e56QKBgQDBNgX7QjfwLcf6RWE/DxCG8Su5pbeG953+bkyTsVkCT8JcmQfc\nVJIR41I189WLLy/AxqxcFoe/eJunctSnOCCLztzEOVgRsN/5ZM34TxDxzBNAU+XP\nMOAkxaejUqTcxB4gSj9FYeW8/4PfWe5d8KeqYRmDY4ReHmKXrZDQ1FNfmwKBgQCR\ncgeXlVvfcliNojyee/Ov1of6gVIfvCeUcCDYFWNc3fWjpfKGA8LA2zKGu3j1HTd1\n9kN3cbIcRK5jYkfeEJmM1nTJFJnHG5kqhWWLJ3MPq4OsGldM6qn6AGHLtJeoQo4F\nobgogpYOn8jb5fZvvcYv0hBTp29O7dzRvRAibAZxaQKBgCrXqFVRnF6edTwbhpLB\nPZRu3TJazvOm+EklpWGfELFe63i4jgi8IOWDz403kTnCNmM+Gw045kQzzEQib/lo\nNEgSuOByKvtGgqTaDcktKP4NOJdc6KFn0akIg15YRjHSywAl30/hYqqq7zjtAVYd\nNV1QQ1AA3BQU4abXzGRKrbjN\n-----END PRIVATE KEY-----\n",
+  "client_email": "react-native@keen-vigil-383820.iam.gserviceaccount.com",
+  "client_id": "100134171619427465879",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/react-native%40keen-vigil-383820.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
