@@ -3,6 +3,7 @@ import base64
 import io
 import json
 import os
+from PIL import Image, ImageDraw, ImageFont
 
 from django.http import HttpResponse
 from django.views import View
@@ -11,7 +12,7 @@ from google.cloud import vision
 from google.cloud import translate_v2 as translate
 from PIL import Image, ImageDraw, ImageFont
 from rest_framework.views import APIView
-
+from google.oauth2 import service_account
 from Translation.serializers import ImageSerializer
 
 
@@ -25,9 +26,16 @@ class TranslateImageView(APIView):
         image = serializer.validated_data['translatedImage']
         target_language = serializer.validated_data['target_language']
 
+        key_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+
         # Initialize the Google Cloud Vision and Translate clients
-        credentials_json = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-        credentials = AnonymousCredentials.from_json_keyfile_dict(json.loads(credentials_json))
+        if key_path is None:
+            print("Environment variable GOOGLE_APPLICATION_CREDENTIALS is not set.")
+        elif not os.path.isfile(key_path):
+            print(f"File does not exist at path: {key_path}")
+        else:
+            print(f"File exists at path: {key_path}")
+        credentials = service_account.Credentials.from_service_account_file(key_path)
 
         # Initialize the Google Cloud Vision and Translate clients
         vision_client = vision.ImageAnnotatorClient(credentials=credentials)
@@ -35,11 +43,10 @@ class TranslateImageView(APIView):
         # Read the TranslateImage file
         image_bytes = image.read()
 
-        # Create a Google Cloud Vision TranslateImage object
-        image_vision = vision.Image(content=image_bytes)
-
+        image = vision.Image(content=image_bytes)
         # Detect text from the TranslateImage
-        response = vision_client.text_detection(image=image_vision)
+        response = vision_client.text_detection(image=image)
+        print(response)
         texts = response.text_annotations
         detected_text = texts[0].description if texts else ''
 
@@ -49,8 +56,7 @@ class TranslateImageView(APIView):
         # Create a new TranslateImage with the translated text
         image_pil = Image.open(io.BytesIO(image_bytes))
         draw = ImageDraw.Draw(image_pil)
-        font = ImageFont.truetype('path/to/your/font.ttf', size=20)  # Path to your desired font file
-
+        font = ImageFont.load_default()
         # Set the position and color for the translated text
         text_position = (10, 10)
         text_color = (255, 255, 255)  # RGB color
