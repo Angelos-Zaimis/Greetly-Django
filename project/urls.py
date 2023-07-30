@@ -42,11 +42,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # GET TOKEN / LOGIN
-    path('api/auth/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/auth/token/refresh/', jwt_views.TokenRefreshView.as_view(),
-         name='token_refresh'),
-    path('api/auth/token/verify/', jwt_views.TokenVerifyView.as_view(),
-         name='token_refresh'),
+    path('api/auth/', include('custom_user.urls')),
 
     # REGISTRATION
     path('api/auth/', include('registration.urls')),

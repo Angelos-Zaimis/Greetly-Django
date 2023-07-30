@@ -61,8 +61,6 @@ def custom_password_validator(value):
         raise ValidationError('Password must contain at least one uppercase letter.')
     if not any(char.islower() for char in value):
         raise ValidationError('Password must contain at least one lowercase letter.')
-    if not any(char in "!@#$%^&*()_+-=[]{};:,.<>/?`~" for char in value):
-        raise ValidationError('Password must contain at least one special character.')
     # Add more custom password validation rules as needed
 
 
@@ -105,3 +103,28 @@ class LanguageSerializerPut(serializers.Serializer):
     class Meta:
         model = User
         fields = '__all__'
+
+class ChangePasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    def validate_email(self, value):
+        try:
+            User.objects.get(email=value)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("User with this email does not exist")
+        return value
+
+class ChangePasswordVerifySerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+    code = serializers.CharField(max_length=555)
+
+    def validate(self, data):
+        email = data.get('email')
+        code = data.get('code')
+        try:
+            user = User.objects.get(email=email, code=code)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("User with given email and code does not exist.")
+
+        return data

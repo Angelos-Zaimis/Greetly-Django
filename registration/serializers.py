@@ -65,9 +65,6 @@ def custom_password_validator(value):
         raise ValidationError('Password must contain at least one uppercase letter.')
     if not any(char.islower() for char in value):
         raise ValidationError('Password must contain at least one lowercase letter.')
-    if not any(char in "!@#$%^&*()_+-=[]{};:,.<>/?`~" for char in value):
-        raise ValidationError('Password must contain at least one special character.')
-
 
 
 

@@ -6,12 +6,15 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import get_user_model
-from custom_user.serializer import UserSerializer,UserInfosSerializer,LanguageSerializerPut
+from custom_user.serializer import UserSerializer, UserInfosSerializer, LanguageSerializerPut, ChangePasswordSerializer, \
+    ChangePasswordVerifySerializer
 import jwt
 from datetime import datetime, timedelta
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from rest_framework import generics, status
 from registration.countries import EU_COUNTRIES, NON_EU_EFTA_COUNTRIES, UK_COUNTRIES
+from project import settings
+from django.core.mail import send_mail
 
 User = get_user_model()
 
@@ -159,3 +162,50 @@ class UserProvider(APIView):
             return HttpResponse(content='Property updated successfully')
         except User.DoesNotExist:
             return HttpResponse(content='User not found', status=status.HTTP_404_NOT_FOUND)
+
+
+class ChangePasswordView(generics.GenericAPIView):
+    serializer_class = ChangePasswordSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user_email = serializer.validated_data['email']
+        try:
+            user = User.objects.get(email=user_email)
+        except User.DoesNotExist:
+            return Response({'error': 'User with this email does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+        email_body = 'Welcome back ' + user.username.capitalize() + '!' + ' Did you forget your password? No worries \n Copy this code to verify and change your password \n' + 'CODE: ' + str(
+            user.code)
+
+        send_mail(
+            'Welcome to Greetly.ch',
+            email_body,
+            settings.DEFAULT_FROM_EMAIL,
+            [user_email],
+            fail_silently=False
+        )
+
+        return HttpResponse(content='Check your emails, you have received a code to change your password.')
+
+
+
+class ChangePasswordVerify(APIView):
+    serializer_class = ChangePasswordVerifySerializer
+
+    def patch(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
+
+        email = validated_data.get('email')
+        code = validated_data.get('code')
+        password = validated_data.get('password')
+
+        user = User.objects.get(email=email, code=code)
+        user.set_password(password)
+        user.save()
+
+        return Response({"message": "Password changed successfully."}, status=status.HTTP_200_OK)
