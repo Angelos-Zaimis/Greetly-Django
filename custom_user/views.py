@@ -191,11 +191,13 @@ class ChangePasswordView(generics.GenericAPIView):
         return HttpResponse(content='Check your emails, you have received a code to change your password.')
 
 
+from rest_framework.response import Response
 
 class ChangePasswordVerify(APIView):
     serializer_class = ChangePasswordVerifySerializer
 
     def patch(self, request, *args, **kwargs):
+        print(request)
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
@@ -204,8 +206,12 @@ class ChangePasswordVerify(APIView):
         code = validated_data.get('code')
         password = validated_data.get('password')
 
-        user = User.objects.get(email=email, code=code)
+        try:
+            user = User.objects.get(email=email, code=code)
+        except User.DoesNotExist:
+            return Response({'error': 'User with this email and code combination does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
         user.set_password(password)
         user.save()
 
-        return Response({"message": "Password changed successfully."}, status=status.HTTP_200_OK)
+        return Response({"message": "Password changed successfully."})

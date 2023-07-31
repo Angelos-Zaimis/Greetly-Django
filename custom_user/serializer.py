@@ -115,9 +115,9 @@ class ChangePasswordSerializer(serializers.Serializer):
         return value
 
 class ChangePasswordVerifySerializer(serializers.Serializer):
-    email = serializers.EmailField()
-    password = serializers.CharField(write_only=True)
-    code = serializers.CharField(max_length=555)
+    email = serializers.EmailField(required=True)
+    password = serializers.CharField(write_only=True, required=True)
+    code = serializers.CharField(max_length=555, required=True)
 
     def validate(self, data):
         email = data.get('email')
