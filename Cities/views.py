@@ -1,6 +1,8 @@
 from django.conf import settings
 from rest_framework import viewsets
 from rest_framework.generics import get_object_or_404, ListAPIView
+from rest_framework.permissions import IsAuthenticated
+
 from .serializers import CitySerializer, SubCategorySerializer,CategorySerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response

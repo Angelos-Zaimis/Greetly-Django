@@ -15,6 +15,7 @@ from rest_framework import generics, status
 from registration.countries import EU_COUNTRIES, NON_EU_EFTA_COUNTRIES, UK_COUNTRIES
 from project import settings
 from django.core.mail import send_mail
+from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
 
@@ -36,29 +37,16 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             user.first_login = False
             user.save()
 
-        payload = {
-            'user_id': user.id,
-            'email': user.email,
-            'exp': datetime.utcnow()
-        }
-        access_token = jwt.encode(payload, 'SECRET_KEY')
+        refresh = RefreshToken.for_user(user)  # Generate a refresh token for this user
 
-        refresh_payload = {
-            'user_id': user.id,
-            'email': user.email,
-            'type': 'refresh',
-            'exp': datetime.utcnow()
-        }
-
-        refresh_token = jwt.encode(refresh_payload, 'SECRET_KEY', algorithm='HS256')
         data = {
             'id': user.id,
             'user': user.email,
             'message': 'Successful login.',
             'username': user.email,
             'tokens': {
-                'access': access_token,
-                'refresh': refresh_token
+                'access':str(refresh.access_token),
+                'refresh':str(refresh)
             },
             'first_login': is_first_login,
             'status': user.status,
@@ -68,6 +56,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         }
 
         return HttpResponse(json.dumps(data), content_type='application/json', status=200)
+
 
     def delete(self, request, *args, **kwargs):
         username = request.data.get('email')
