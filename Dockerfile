@@ -14,7 +14,7 @@ COPY requirements.txt ./
 
 RUN pip install -r requirements.txt
 
-COPY middleware-information /usr/src/app/
+COPY middleware-information /usr/src/app
 
 COPY entrypoint.sh /usr/src/app
 
