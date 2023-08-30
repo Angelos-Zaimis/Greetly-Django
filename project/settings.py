@@ -37,7 +37,7 @@ DEBUG = True
 
 # settings.py
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'exp://127.0.0.1', '10.168.1.2 ']
+ALLOWED_HOSTS = ['*']
 
 
 # Add your development machine IP address and iPhone IP address

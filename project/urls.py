@@ -26,7 +26,7 @@ from django.conf import settings
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="middleware-informations",
+        title="middleware-information",
         default_version='v1',
         description="Backend-API",
         terms_of_service="https://www.google.com/policies/terms/",
@@ -42,10 +42,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # GET TOKEN / LOGIN
-    path('api/auth/', include('custom_user.urls')),
+    path('middleware-info/auth/', include('custom_user.urls')),
 
     # REGISTRATION
-    path('api/auth/', include('registration.urls')),
+    path('middleware-info/auth/', include('registration.urls')),
 
     # SWAGGER PATHS
     path('', schema_view.with_ui('swagger', cache_timeout=0),
@@ -53,18 +53,18 @@ urlpatterns = [
     path('redoc/', schema_view.with_ui('redoc',
                                        cache_timeout=0), name='schema-redoc'),
     # GET CITY , CATEGORY,INFORMATION
-    path('api/cities/', include('Cities.urls')),
+    path('middleware-info/cities/', include('Cities.urls')),
 
-    path('api/translateImage/', include('Translation.urls')),
+    path('middleware-info/translateImage/', include('Translation.urls')),
 
     # LANGUAGE
-    path('api/userInfo/', UserProvider.as_view(), name='get_userinfo'),
+    path('middleware-info/userInfo/', UserProvider.as_view(), name='get_userinfo'),
 
     # TEAM MEMBERS
-    path('api/teamMembers/', include('teamMembers.urls')),
+    path('middleware-info/teamMembers/', include('teamMembers.urls')),
 
     # BOOKMARKS
-    path('api/bookmarks/', include('bookmark.urls'))
+    path('middleware-info/bookmarks/', include('bookmark.urls'))
 
 
 ]
