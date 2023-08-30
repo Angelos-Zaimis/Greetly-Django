@@ -12,7 +12,7 @@ COPY ./requirements.txt /usr/src/app/requirements.txt
 RUN pip install -r requirements.txt
 
 COPY djangofollow /usr/src/app/
-COPY entrypoint.sh /usr/src/app
+COPY entrypoint.sh /usr/src/app/
 
 EXPOSE 8000
 
