@@ -9,10 +9,14 @@ RUN pip install --upgrade pip
 COPY ./requirements.txt /usr/src/app/requirements.txt
 RUN pip install -r requirements.txt
 
+# Copy your application code and scripts
 COPY . /usr/src/app/
 
-COPY entrypoint.sh /usr/src/app
+# Add execute permissions to entrypoint.sh
+RUN chmod +x /usr/src/app/entrypoint.sh
 
+# Expose port
 EXPOSE 8000
 
+# Set entrypoint
 ENTRYPOINT ["./entrypoint.sh"]
