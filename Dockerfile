@@ -12,7 +12,6 @@ RUN pip install -r requirements.txt
 # Copy your application code and scripts
 COPY . /usr/src/app/
 
-# Add execute permissions to entrypoint.sh
 RUN chmod +x /usr/src/app/entrypoint.sh
 
 # Expose port
