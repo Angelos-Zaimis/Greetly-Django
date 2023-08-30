@@ -14,6 +14,8 @@ COPY . /usr/src/app/
 
 RUN chmod +x /usr/src/app/entrypoint.sh
 
+CMD ["tail", "-f", "/dev/null"]
+
 # Expose port
 EXPOSE 8000
 
