@@ -122,7 +122,7 @@ DATABASES = {
         'USER': os.environ.get('QOVERY_POSTGRESQL_ZF9F2352B_LOGIN','postgres'),
         'PASSWORD': os.environ.get('QOVERY_POSTGRESQL_ZF9F2352B_PASSWORD'),
         'PORT': os.environ.get('QOVERY_POSTGRESQL_ZF9F2352B_PORT',5432),
-        'HOST': os.environ.get('QOVERY_POSTGRESQL_ZF9F2352B_HOST','zf9f2352b-postgresql.z503fe5f4.scsi.sh || Q_DOMAIN '),
+        'HOST': os.environ.get('QOVERY_POSTGRESQL_ZF9F2352B_HOST','zf9f2352b-postgresql.z503fe5f4.scsi.sh ||Q_DOMAIN|| '),
     }
 }
 
