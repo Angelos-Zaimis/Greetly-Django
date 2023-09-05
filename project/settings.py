@@ -37,7 +37,7 @@ DEBUG = True
 
 # settings.py
 
-ALLOWED_HOSTS = ['p8081-z71384fb9-zd99dd61d-gtw.z503fe5f4.scsi.sh']
+ALLOWED_HOSTS = ['p8081-z71384fb9-zd99dd61d-gtw.z503fe5f4.scsi.sh','*']
 
 
 # Add your development machine IP address and iPhone IP address
@@ -81,7 +81,7 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:*',  # Replace with your Expo Go URL
     'exp://127.0.0.1:*',
-     "https://p8081-z71384fb9-zd99dd61d-gtw.z503fe5f4.scsi.sh"
+    'https://p8081-z71384fb9-zd99dd61d-gtw.z503fe5f4.scsi.sh'
 ]
 
 ROOT_URLCONF = 'project.urls'
