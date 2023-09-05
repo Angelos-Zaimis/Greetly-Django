@@ -37,7 +37,7 @@ DEBUG = True
 
 # settings.py
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['p8081-z71384fb9-zd99dd61d-gtw.z503fe5f4.scsi.sh']
 
 
 # Add your development machine IP address and iPhone IP address
