@@ -39,6 +39,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['p8081-z71384fb9-zd99dd61d-gtw.z503fe5f4.scsi.sh','*']
 
+CSRF_TRUSTED_ORIGINS = [
+    'p8081-z71384fb9-zd99dd61d-gtw.z503fe5f4.scsi.sh',
+]
 
 # Add your development machine IP address and iPhone IP address
 
