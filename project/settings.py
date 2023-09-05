@@ -69,19 +69,19 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # only once
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
 ]
+
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:*',  # Replace with your Expo Go URL
-    'exp://127.0.0.1:*',   # Replace with your Expo Go URL
+    'exp://127.0.0.1:*',
+     "https://p8081-z71384fb9-zd99dd61d-gtw.z503fe5f4.scsi.sh"
 ]
 
 ROOT_URLCONF = 'project.urls'
