@@ -33,12 +33,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+
+CORS_ALLOW_CREDENTIALS = True
+
 
 # settings.py
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['p8081-z71384fb9-zd99dd61d-gtw.z503fe5f4.scsi.sh', 'http://localhost:*', 'exp://127.0.0.1:*',]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://p8081-z71384fb9-zd99dd61d-gtw.z503fe5f4.scsi.sh',
+]
 
 # Add your development machine IP address and iPhone IP address
 
@@ -69,19 +75,19 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # only once
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
 ]
+
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:*',  # Replace with your Expo Go URL
-    'exp://127.0.0.1:*',   # Replace with your Expo Go URL
+    'exp://127.0.0.1:*',
+    'https://p8081-z71384fb9-zd99dd61d-gtw.z503fe5f4.scsi.sh'
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -104,25 +110,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'project.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-#
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('POSTGRES_DB'),
-        "PORT": os.environ.get('POSTGRES_PORT'),
-        "HOST": os.environ.get('POSTGRES_HOST'),
-        "USER": os.environ.get('POSTGRES_USER'),
-        "PASSWORD": os.environ.get('POSTGRES_PASSWORD'),
+        'NAME': os.environ.get('QOVERY_POSTGRESQL_Z8F433F1D_DEFAULT_DATABASE_NAME','postgres'),
+        'USER': os.environ.get('QOVERY_POSTGRESQL_Z8F433F1D_LOGIN','qoveryadmin'),
+        'PASSWORD': os.environ.get('QOVERY_POSTGRESQL_Z8F433F1D_PASSWORD'),
+        'HOST': os.environ.get('QOVERY_POSTGRESQL_Z8F433F1D_HOST','z8f433f1d-postgresql.csihvcuphgw1.eu-central-1.rds.amazonaws.com'),
+        'PORT': os.environ.get('QOVERY_POSTGRESQL_Z8F433F1D_PORT',5432)
     }
 }
 
@@ -190,10 +185,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 DEFAULT_FROM_EMAIL= os.environ.get('DEFAULT_FROM_EMAI')
 EMAIL_USE_TLS= os.environ.get('EMAIL_USE_TLS')
 EMAIL_HOST= os.environ.get('EMAIL_HOST')
 EMAIL_HOST_USER= os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD= os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_PORT= os.environ.get('EMAIL_PORT')
+
