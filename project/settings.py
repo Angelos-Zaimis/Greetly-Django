@@ -30,21 +30,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-vyt=uc&i!e+u@kukacz8bz2r&$3dsc*ao$nq4pg#ot6iw4m)2&'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
-CORS_ALLOW_CREDENTIALS = True
-
+DEBUG = True
 
 # settings.py
 
-ALLOWED_HOSTS = ['p8081-z71384fb9-zd99dd61d-gtw.z503fe5f4.scsi.sh', 'http://localhost:*', 'exp://127.0.0.1:*',]
+ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://p8081-z71384fb9-zd99dd61d-gtw.z503fe5f4.scsi.sh',
-]
 
 # Add your development machine IP address and iPhone IP address
 
@@ -75,19 +69,19 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # only once
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
-
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:*',  # Replace with your Expo Go URL
-    'exp://127.0.0.1:*',
-    'https://p8081-z71384fb9-zd99dd61d-gtw.z503fe5f4.scsi.sh'
+    'exp://127.0.0.1:*',   # Replace with your Expo Go URL
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -110,14 +104,25 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'project.wsgi.application'
 
+
+# Database
+# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
+#
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('QOVERY_POSTGRESQL_Z8F433F1D_DEFAULT_DATABASE_NAME','postgres'),
-        'USER': os.environ.get('QOVERY_POSTGRESQL_Z8F433F1D_LOGIN','qoveryadmin'),
-        'PASSWORD': os.environ.get('QOVERY_POSTGRESQL_Z8F433F1D_PASSWORD'),
-        'HOST': os.environ.get('QOVERY_POSTGRESQL_Z8F433F1D_HOST','z8f433f1d-postgresql.csihvcuphgw1.eu-central-1.rds.amazonaws.com'),
-        'PORT': os.environ.get('QOVERY_POSTGRESQL_Z8F433F1D_PORT',5432)
+        'NAME': os.environ.get('POSTGRES_DB'),
+        "PORT": os.environ.get('POSTGRES_PORT'),
+        "HOST": os.environ.get('POSTGRES_HOST'),
+        "USER": os.environ.get('POSTGRES_USER'),
+        "PASSWORD": os.environ.get('POSTGRES_PASSWORD'),
     }
 }
 
@@ -179,12 +184,12 @@ DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 
 DEFAULT_FROM_EMAIL= os.environ.get('DEFAULT_FROM_EMAI')
 EMAIL_USE_TLS= os.environ.get('EMAIL_USE_TLS')
