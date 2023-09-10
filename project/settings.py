@@ -15,11 +15,6 @@ from pathlib import Path
 
 # settings.py
 
-from dotenv import load_dotenv
-
-load_dotenv()  # take environment variables from .env.
-
-
 # remainder of file...
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -32,9 +27,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+SERVER_TYPE = os.environ.get('SERVER_TYPE', 'development')
 
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 # settings.py
 
 ALLOWED_HOSTS = ['*']
@@ -79,6 +75,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
 ]
 
+
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:*',  # Replace with your Expo Go URL
     'exp://127.0.0.1:*',   # Replace with your Expo Go URL
@@ -103,17 +100,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'project.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-#
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 DATABASES = {
     'default': {
@@ -176,13 +162,30 @@ SIMPLE_JWT = {
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+if SERVER_TYPE == 'production':
+    # production settings
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'  # AWS SDK
+    AWS_ACCESS_KEY_ID = os.environ.get(
+        'DO_SPACES_ACCESS_KEY')  # Spaces access key
+    AWS_SECRET_ACCESS_KEY = os.environ.get(
+        'DO_SPACES_SECRET')  # Spaces access secret
+    AWS_STORAGE_BUCKET_NAME = os.environ.get(
+        'DO_SPACES_SPACE_NAME')  # Name of the space
+    # Endpoint found under Spaces/<your-space>/Settings
+    AWS_S3_ENDPOINT_URL = os.environ.get('DO_SPACES_ENDPOINT')
+    # Full url displayed in Spaces
+    MEDIA_URL = 'https://greetlych.fra1.digitaloceanspaces.com/media/'
+
+else:
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
 
 
 # Default primary key field type
