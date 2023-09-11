@@ -36,6 +36,9 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['middleware-information-b3a171d27812.herokuapp.com']
 
+CORS_ALLOWED_ORIGINS = ['https://middleware-information-b3a171d27812.herokuapp.com', 'http://localhost:3002','http://localhost:3000']
+
+
 if SERVER_TYPE != 'production':
     ALLOWED_HOSTS += ['127.0.0.1']
 
@@ -78,13 +81,10 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
 ]
 
-
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:*',  # Replace with your Expo Go URL
-    'exp://127.0.0.1:*',   # Replace with your Expo Go URL
-]
-
 ROOT_URLCONF = 'project.urls'
+
+
+CSRF_TRUSTED_ORIGINS = ['https://middleware-information-b3a171d27812.herokuapp.com']
 
 TEMPLATES = [
     {
