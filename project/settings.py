@@ -166,8 +166,9 @@ SIMPLE_JWT = {
 # STATICFILES_DIRS = (
 #     os.path.join(BASE_DIR, 'static'),
 # )
-STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 
 if SERVER_TYPE == 'production':
@@ -185,7 +186,7 @@ if SERVER_TYPE == 'production':
     MEDIA_URL = 'https://greetlych.fra1.digitaloceanspaces.com/media/'
 
 else:
-    MEDIA_URL = 'media/'
+    MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
