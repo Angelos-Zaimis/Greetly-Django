@@ -34,8 +34,10 @@ SERVER_TYPE = os.environ.get('SERVER_TYPE', 'development')
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 # settings.py
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['middleware-information-b3a171d27812.herokuapp.com']
 
+if SERVER_TYPE != 'production':
+    ALLOWED_HOSTS += ['127.0.0.1']
 
 # Add your development machine IP address and iPhone IP address
 
