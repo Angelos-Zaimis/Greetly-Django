@@ -211,7 +211,6 @@ EMAIL_HOST_USER= os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD= os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_PORT= os.environ.get('EMAIL_PORT')
 
-
 SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,  # Change settings to True to enable Django Login option
     'SECURITY_DEFINITIONS': {  # Allows usage of Access token to make requests on the docs.
@@ -222,4 +221,3 @@ SWAGGER_SETTINGS = {
         }
     }
 }
-
