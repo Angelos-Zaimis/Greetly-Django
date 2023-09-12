@@ -1,16 +1,11 @@
 import json
 from django.http import HttpResponse
 from requests import Response
-from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import get_user_model
 from custom_user.serializer import UserSerializer, UserInfosSerializer, LanguageSerializerPut, ChangePasswordSerializer, \
     ChangePasswordVerifySerializer
-import jwt
-from datetime import datetime, timedelta
-from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework import generics, status
 from registration.countries import EU_COUNTRIES, NON_EU_EFTA_COUNTRIES, UK_COUNTRIES
 from project import settings
@@ -52,7 +47,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             'status': user.status,
             'citizenship': user.selectedCitizenship,
             'language': user.language,
-            'country': user.country
+            'country': user.country,
+            'isSubscribed': user.isSubscribed
         }
 
         return HttpResponse(json.dumps(data), content_type='application/json', status=200)
@@ -112,7 +108,8 @@ class UserProvider(APIView):
                 'status': user.status,
                 'citizenship': user.selectedCitizenship,
                 'language': user.language,
-                'country': user.country
+                'country': user.country,
+                'isSubscribed': user.isSubscribed
             }
               # Assuming the language is stored in the user's profile model
             return HttpResponse(json.dumps(data))
