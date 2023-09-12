@@ -13,6 +13,7 @@ class User(AbstractUser):
     is_active = models.BooleanField(default=True)
     is_verified = models.BooleanField(default=False)
     first_login = models.BooleanField(default=True)
+    isSubscribed = models.BooleanField(default=False)
     email = models.EmailField(unique=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'password']
