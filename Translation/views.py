@@ -43,9 +43,9 @@ class TranslateImageView(APIView):
         # Read the TranslateImage file
         image_bytes = image.read()
 
-        image = vision.Image(content=image_bytes)
+        imageToTranslate= vision.Image(content=image_bytes)
         # Detect text from the TranslateImage
-        response = vision_client.text_detection(image=image)
+        response = vision_client.text_detection(image=imageToTranslate)
         print(response)
         texts = response.text_annotations
         detected_text = texts[0].description if texts else ''
