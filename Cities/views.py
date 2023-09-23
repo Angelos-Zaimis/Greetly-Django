@@ -121,9 +121,8 @@ class InformationView(APIView):
             # Get the complete image URL
             current_site = get_current_site(request)
             protocol = 'https' if request.is_secure() else 'http'
-            image_url = information_obj.image
+            image_url = f"{protocol}://{current_site}{unquote(str(information_obj.image))}"
             information_obj.image = image_url
-
 
             serializer = InformationSerializer(information_obj)
             return Response(serializer.data)
