@@ -1,5 +1,5 @@
 from django.conf import settings
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.generics import get_object_or_404, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
@@ -72,15 +72,24 @@ class CityCategorySubCategoriesAPIView(APIView):
             current_site = get_current_site(request)
             protocol = 'https' if request.is_secure() else 'http'
 
-            # Add "http://" or "https://" prefix to image URLs
+            # Create a list to hold image URLs
+            image_urls = []
+
+            # Add "http://" or "https://" prefix to image URLs and collect them in the list
             for subcategory in serialized_subcategories:
                 if 'image' in subcategory:
                     image_url = f"{protocol}://{current_site}{subcategory['image']}"
-                    subcategory['image'] = image_url
+                    image_urls.append(image_url)
 
-            return Response(serialized_subcategories)
+            # Create a dictionary to hold the result
+            result = {
+                'subcategories': serialized_subcategories,
+                'image_url': image_urls[0] if image_urls else None,
+            }
+
+            return Response(result)
         except (City.DoesNotExist, Category.DoesNotExist):
-            return Response("City or Category not found", status=404)
+            return Response("City or Category not found", status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request, city, category):
         city_obj = get_object_or_404(City, name=city)
