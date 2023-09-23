@@ -108,15 +108,15 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.environ.get('POSTGRES_DB'),
-        "PORT": os.environ.get('POSTGRES_PORT'),
-        "HOST": os.environ.get('POSTGRES_HOST'),
-        "USER": os.environ.get('POSTGRES_USER'),
-        "PASSWORD": os.environ.get('POSTGRES_PASSWORD'),
+        'PORT': os.environ.get('POSTGRES_PORT'),
+        'HOST': os.environ.get('POSTGRES_HOST'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
     }
 }
 
 if SERVER_TYPE == 'production':
-    DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=False)
+    DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
 
 logger = logging.getLogger('django.db.backends')
