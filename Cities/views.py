@@ -53,7 +53,11 @@ class CityCategoriesAPIView(APIView):
 
                 })
 
-            return Response(category_data)
+                response = {
+                    'categories': category_data,
+                    'image_url': image_url
+                }
+            return Response(response)
         except City.DoesNotExist:
             return Response("City not found", status=404)
 
