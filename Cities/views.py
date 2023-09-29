@@ -2,7 +2,7 @@ from django.conf import settings
 from rest_framework import viewsets, status
 from rest_framework.generics import get_object_or_404, ListAPIView
 from rest_framework.permissions import IsAuthenticated
-
+from urllib.parse import urljoin
 from .serializers import CitySerializer, SubCategorySerializer,CategorySerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -45,11 +45,12 @@ class CityCategoriesAPIView(APIView):
                 if category.image:
                     current_site = get_current_site(request)
                     protocol = 'https' if request.is_secure() else 'http'
-                    image_url = f"{protocol}://{current_site}{category.image.url}"
+                    image_url = urljoin(f"{protocol}://{current_site}", category.image.url)
+
                 if category.table_image:
                     current_site = get_current_site(request)
                     protocol = 'https' if request.is_secure() else 'http'
-                    image_tablet_url = f"{protocol}://{current_site}{category.table_image}"
+                    image_tablet_url = urljoin(f"{protocol}://{current_site}", category.table_image.url)
                 category_data.append({
                     'name': category.name,
                     'icon': category.icon,
