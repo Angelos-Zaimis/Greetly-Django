@@ -52,7 +52,6 @@ class CityCategoriesAPIView(APIView):
                     image_tablet_url = f"{protocol}://{current_site}{category.table_image}"
                 category_data.append({
                     'name': category.name,
-                    'image': image_url,
                     'icon': category.icon,
                     'description': category.description
                 })
