@@ -88,7 +88,7 @@ class CityCategorySubCategoriesAPIView(APIView):
             result = {
                 'subcategories': serialized_subcategories,
                 'image_url': image_url,
-                'table_image_url': table_image_url
+                'tablet_image_url': table_image_url
             }
             return Response(result)
         except (City.DoesNotExist, Category.DoesNotExist):
