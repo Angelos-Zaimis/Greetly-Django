@@ -40,22 +40,27 @@ class CityCategoriesAPIView(APIView):
             categories = Category.objects.filter(city=city_obj)
             category_data = []
             for category in categories:
-                image_url = None  # Initialize icon_url with a default value
+                image_url = None
+                image_tablet_url = None# Initialize icon_url with a default value
                 if category.image:
                     current_site = get_current_site(request)
                     protocol = 'https' if request.is_secure() else 'http'
                     image_url = f"{protocol}://{current_site}{category.image.url}"
+                if category.table_image:
+                    current_site = get_current_site(request)
+                    protocol = 'https' if request.is_secure() else 'http'
+                    image_tablet_url = f"{protocol}://{current_site}{category.table_image}"
                 category_data.append({
                     'name': category.name,
                     'image': image_url,
                     'icon': category.icon,
-                    'description': category.description,
-
+                    'description': category.description
                 })
 
                 response = {
                     'categories': category_data,
-                    'image_url': image_url
+                    'image_url': image_url,
+                    'tablet_image': image_tablet_url
                 }
             return Response(response)
         except City.DoesNotExist:

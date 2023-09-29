@@ -8,6 +8,7 @@ from django.contrib.postgres.fields import ArrayField
 class City(models.Model):
     name = models.CharField(max_length=100,blank=False)
     image = models.ImageField(upload_to='city_images/', default='', blank=True)
+    table_image = models.ImageField(upload_to='city_images/', default='', blank=True)
 
     def __str__(self):
         return f"ID: {self.id} Canton: {self.name}"
@@ -17,6 +18,7 @@ class Category(models.Model):
     description = models.CharField(max_length=100, default='')
     city = models.ForeignKey(City, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='city_images/', default='', blank=True)
+    table_image = models.ImageField(upload_to='city_images/', default='', blank=True)
     icon = models.CharField(max_length=200, default='')
 
     def __str__(self):
@@ -26,6 +28,7 @@ class SubCategory(models.Model):
     title = models.CharField(max_length=100)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='category_images/', default='', blank=True)
+    table_image = models.ImageField(upload_to='city_images/', default='', blank=True)
 
 
 
@@ -39,6 +42,7 @@ class Information(models.Model):
     subtitle = models.CharField(max_length=100, default='')
     description = models.CharField(max_length=1000)
     image = models.ImageField(upload_to='category_images/', default='', blank=True)
+    table_image = models.ImageField(upload_to='city_images/', default='', blank=True)
     requiredDocuments = ArrayField(models.CharField(max_length=100), blank=True, default=list)
     subcategory = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
 
