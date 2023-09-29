@@ -87,7 +87,7 @@ class CityCategorySubCategoriesAPIView(APIView):
             # Add "http://" or "https://" prefix to image URLs and collect them in the list
             for subcategory in serialized_subcategories:
                 if 'image' in subcategory:
-                    image_url = f"{protocol}://{current_site}{subcategory['image']}"
+                    image_url = urljoin(f"{protocol}://{current_site}", subcategory['image'])
                     image_urls.append(image_url)
 
             # Create a dictionary to hold the result
@@ -95,7 +95,6 @@ class CityCategorySubCategoriesAPIView(APIView):
                 'subcategories': serialized_subcategories,
                 'image_url': image_urls[0] if image_urls else None,
             }
-
             return Response(result)
         except (City.DoesNotExist, Category.DoesNotExist):
             return Response("City or Category not found", status=status.HTTP_404_NOT_FOUND)
