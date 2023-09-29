@@ -18,7 +18,7 @@ class Category(models.Model):
     description = models.CharField(max_length=100, default='')
     city = models.ForeignKey(City, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='city_images/', default='', blank=True)
-    table_image = models.ImageField(upload_to='city_images/', default='', blank=True)
+    table_image = models.ImageField(upload_to='city_image/', default='', blank=True)
     icon = models.CharField(max_length=200, default='')
 
     def __str__(self):
