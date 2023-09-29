@@ -3,7 +3,7 @@ from rest_framework import viewsets, status
 from rest_framework.generics import get_object_or_404, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from urllib.parse import urljoin
-from .serializers import CitySerializer, SubCategorySerializer,CategorySerializer
+from .serializers import CitySerializer, SubCategorySerializer, CategorySerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import City, Category, SubCategory, Information
@@ -13,8 +13,6 @@ from .serializers import InformationSerializer
 class GetCitiesView(ListAPIView):
     queryset = City.objects.all()
     serializer_class = CitySerializer
-
-
 
 
 class InformationViewSet(viewsets.ReadOnlyModelViewSet):
@@ -32,7 +30,6 @@ class InformationViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(serializer.data)
 
 
-
 class CityCategoriesAPIView(APIView):
     def get(self, request, city):
         try:
@@ -41,7 +38,7 @@ class CityCategoriesAPIView(APIView):
             category_data = []
             for category in categories:
                 image_url = None
-                image_tablet_url = None# Initialize icon_url with a default value
+                image_tablet_url = None  # Initialize icon_url with a default value
                 if category.image:
                     current_site = get_current_site(request)
                     protocol = 'https' if request.is_secure() else 'http'
@@ -81,19 +78,17 @@ class CityCategorySubCategoriesAPIView(APIView):
             current_site = get_current_site(request)
             protocol = 'https' if request.is_secure() else 'http'
 
-            # Create a list to hold image URLs
-            image_urls = []
-
-            # Add "http://" or "https://" prefix to image URLs and collect them in the list
             for subcategory in serialized_subcategories:
                 if 'image' in subcategory:
                     image_url = urljoin(f"{protocol}://{current_site}", subcategory['image'])
-                    image_urls.append(image_url)
+                if 'table_image' in subcategory:
+                    table_image_url = urljoin(f"{protocol}://{current_site}", subcategory['table_image'])
 
             # Create a dictionary to hold the result
             result = {
                 'subcategories': serialized_subcategories,
-                'image_url': image_urls[0] if image_urls else None,
+                'image_url': image_url,
+                'table_image_url': table_image_url
             }
             return Response(result)
         except (City.DoesNotExist, Category.DoesNotExist):
@@ -121,9 +116,8 @@ class CityCategorySubCategoriesAPIView(APIView):
         return Response(serialized_subcategories)
 
 
-
-
 from urllib.parse import unquote
+
 
 class InformationView(APIView):
     def get(self, request, city, category, subcategory, information):
