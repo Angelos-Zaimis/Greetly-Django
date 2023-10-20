@@ -15,6 +15,21 @@ class GetCitiesView(ListAPIView):
     serializer_class = CitySerializer
 
 
+class GetCitiesBasedOnCategory(ListAPIView):
+    serializer_class = CitySerializer
+    def get_queryset(self):
+        # Get the value of 'canton_region' from the URL query parameters
+        canton_region = self.request.query_params.get('canton_region')
+
+        if not canton_region:
+            # Return a 404 response if 'canton_region' is not provided
+            return Response(status=404)
+
+        # Filter cities based on the 'canton_region'
+        queryset = City.objects.filter(canton_region=canton_region)
+
+        return queryset
+
 class InformationViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = InformationSerializer
 
