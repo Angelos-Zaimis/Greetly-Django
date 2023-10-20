@@ -14,8 +14,6 @@ from PIL import Image, ImageDraw, ImageFont
 from rest_framework.views import APIView
 from google.oauth2 import service_account
 from Translation.serializers import ImageSerializer
-
-
 class TranslateImageView(APIView):
     def post(self, request):
         # Deserialize the TranslateImage data and target language code
@@ -40,10 +38,12 @@ class TranslateImageView(APIView):
         # Initialize the Google Cloud Vision and Translate clients
         vision_client = vision.ImageAnnotatorClient(credentials=credentials)
         translate_client = translate.Client(credentials=credentials)
+
         # Read the TranslateImage file
         image_bytes = image.read()
 
-        imageToTranslate= vision.Image(content=image_bytes)
+        imageToTranslate = vision.Image(content=image_bytes)
+
         # Detect text from the TranslateImage
         response = vision_client.text_detection(image=imageToTranslate)
         print(response)
@@ -53,20 +53,24 @@ class TranslateImageView(APIView):
         # Translate the detected text
         translation = translate_client.translate(detected_text, target_language)
 
+        # Remove non-ASCII characters that cause encoding errors
+        cleaned_translation = ''.join([char if ord(char) < 128 else ' ' for char in translation['translatedText']])
+
         # Create a new TranslateImage with the translated text
         image_pil = Image.open(io.BytesIO(image_bytes))
         draw = ImageDraw.Draw(image_pil)
-        font = ImageFont.load_default()
+
         # Set the position and color for the translated text
         text_position = (10, 10)
         text_color = (255, 255, 255)  # RGB color
 
-        # Write the translated text on the TranslateImage
-        draw.text(text_position, translation['translatedText'], font=font, fill=text_color)
+        # Write the translated text on the image
+        draw.text(text_position, cleaned_translation, fill=text_color)
 
         # Create a response with the modified TranslateImage
-        response = HttpResponse(content_type='TranslateImage/jpeg')
+        response = HttpResponse(content_type='image/jpeg')
         response['Content-Disposition'] = 'attachment; filename="translated_image.jpg"'
         image_pil.save(response, format='JPEG')
+
 
         return response
