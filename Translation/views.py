@@ -1,16 +1,15 @@
-
 import os
-from django.http import HttpResponse
-from django.views import View
-from google.cloud import vision
-from google.cloud import translate_v2 as translate
-from PIL import Image, ImageDraw, ImageFont
-from google.oauth2 import service_account
+from rest_framework.views import APIView
 from Translation.serializers import ImageSerializer
+from django.http import HttpResponse
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
+from PIL import Image, ImageDraw
 import io
-class TranslateImageView(View):
+from google.cloud import vision
+from google.cloud import translate_v2 as translate
+from google.oauth2 import service_account
+class TranslateImageView(APIView):
     def post(self, request):
         # Deserialize the TranslateImage data and target language code
         serializer = ImageSerializer(data=request.data)
