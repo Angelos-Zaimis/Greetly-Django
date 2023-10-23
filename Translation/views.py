@@ -1,20 +1,16 @@
 
-import base64
-import io
-import json
 import os
-from PIL import Image, ImageDraw, ImageFont
-
 from django.http import HttpResponse
 from django.views import View
-from google.auth.credentials import AnonymousCredentials
 from google.cloud import vision
 from google.cloud import translate_v2 as translate
 from PIL import Image, ImageDraw, ImageFont
-from rest_framework.views import APIView
 from google.oauth2 import service_account
 from Translation.serializers import ImageSerializer
-class TranslateImageView(APIView):
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+import io
+class TranslateImageView(View):
     def post(self, request):
         # Deserialize the TranslateImage data and target language code
         serializer = ImageSerializer(data=request.data)
@@ -67,10 +63,18 @@ class TranslateImageView(APIView):
         # Write the translated text on the image
         draw.text(text_position, cleaned_translation, fill=text_color)
 
-        # Create a response with the modified TranslateImage
-        response = HttpResponse(content_type='image/jpeg')
-        response['Content-Disposition'] = 'attachment; filename="translated_image.jpg"'
-        image_pil.save(response, format='JPEG')
+        # Save the translated image to DigitalOcean Spaces
+        image_name = 'translated_image.jpg'  # Choose a suitable name for the image
+        image_content = image_pil.tobytes()
+        image_file = ContentFile(image_content)
 
+        image_path = f'translatedImages/{image_name}'  # Replace 'translatedImages' with your desired folder structure
+
+        default_storage.save(image_path, image_file)
+
+        # Create a response with the URL of the saved image
+        response = HttpResponse(content_type='image/jpeg')
+        response['Content-Disposition'] = f'attachment; filename="{image_name}"'
+        response['X-Space-URL'] = default_storage.url(image_path)
 
         return response
