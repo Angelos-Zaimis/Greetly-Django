@@ -71,6 +71,9 @@ class TranslateImageView(APIView):
 
         default_storage.save(image_path, image_file)
 
+        # Set the ACL to public-read
+        default_storage.bucket.blob(image_path).make_public()
+
         # Create a response with the URL of the saved image
         response = HttpResponse(content_type='image/jpeg')
         response['Content-Disposition'] = f'attachment; filename="{image_name}"'
