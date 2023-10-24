@@ -1,6 +1,9 @@
 import os
+
+from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from Translation.serializers import ImageSerializer
+from Translation.models import TranslateImage
 from django.http import HttpResponse
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
@@ -9,6 +12,11 @@ import io
 from google.cloud import vision
 from google.cloud import translate_v2 as translate
 from google.oauth2 import service_account
+
+class GetImagesView(ListAPIView):
+    queryset = TranslateImage.objects.all()
+    serializer_class = ImageSerializer
+
 class TranslateImageView(APIView):
     def post(self, request):
         # Deserialize the TranslateImage data and target language code
@@ -63,7 +71,7 @@ class TranslateImageView(APIView):
         draw.text(text_position, cleaned_translation, fill=text_color)
 
         # Save the translated image to DigitalOcean Spaces
-        image_name = 'translated_image.jpg'  # Choose a suitable name for the image
+        image_name = 'translated_image.png'  # Choose a suitable name for the image
         image_content = image_pil.tobytes()
         image_file = ContentFile(image_content)
 
@@ -71,11 +79,8 @@ class TranslateImageView(APIView):
 
         default_storage.save(image_path, image_file)
 
-        # Set the ACL to public-read
-        default_storage.bucket.blob(image_path).make_public()
-
         # Create a response with the URL of the saved image
-        response = HttpResponse(content_type='image/jpeg')
+        response = HttpResponse(content_type='image/png')
         response['Content-Disposition'] = f'attachment; filename="{image_name}"'
         response['X-Space-URL'] = default_storage.url(image_path)
 
