@@ -13,7 +13,7 @@ from custom_user.models import User
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
-@csrf_exempt
+
 class CreateCheckoutSessionView(View):
 
     def post(self, request, *args, **kwargs):
