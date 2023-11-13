@@ -6,11 +6,8 @@ from django.views import View
 from django.http import HttpResponse, JsonResponse
 import stripe
 from django.views.decorators.csrf import csrf_exempt
-from requests import Response
-from rest_framework.views import APIView
-
 from custom_user.models import User
-from custom_user.serializer import UserInfosSerializer
+
 
 # Create your views here.
 
@@ -52,7 +49,6 @@ class CreateCheckoutSessionView(View):
 def stripe_webhook(request):
   payload = request.body
   sig_header = request.META['HTTP_STRIPE_SIGNATURE']
-  event = None
 
   try:
     event = stripe.Webhook.construct_event(
