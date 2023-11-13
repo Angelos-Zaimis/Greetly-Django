@@ -34,8 +34,8 @@ class CreateCheckoutSessionView(View):
             metadata={
                 'user_email': user_email
             },
-            success_url='http://localhost:3000/payments/success',
-            cancel_url='http://localhost:3000/payments/cancel'
+            success_url='https://tasos-boskos-icarecommunityproject.com',
+            cancel_url='https://tasos-boskos-icarecommunityproject.com'
         )
 
         data = {
