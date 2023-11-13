@@ -56,3 +56,4 @@ uritemplate==4.1.1
 urllib3==1.26.14
 wheel==0.38.4
 whitenoise==6.3.0
+stripe==2.55.2
