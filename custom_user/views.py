@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import get_user_model
 from custom_user.serializer import UserSerializer, UserInfosSerializer, LanguageSerializerPut, ChangePasswordSerializer, \
-    ChangePasswordVerifySerializer
+    ChangePasswordVerifySerializer, UserExistsSerializer
 from rest_framework import generics, status
 from registration.countries import EU_COUNTRIES, NON_EU_EFTA_COUNTRIES, UK_COUNTRIES
 from project import settings
@@ -48,7 +48,14 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             'citizenship': user.selectedCitizenship,
             'language': user.language,
             'country': user.country,
-            'isSubscribed': user.isSubscribed
+            'isSubscribed': user.isSubscribed,
+            'product_details': {
+                'subscription_plan': user.product_details.get('subscription_plan', ''),
+                'subscription_price': user.product_details.get('subscription_price', ''),
+                'subscription_currency': user.product_details.get('subscription_currency', ''),
+                'subscription_id': user.product_details.get('subscription_id', '')
+
+            }
         }
 
         return HttpResponse(json.dumps(data), content_type='application/json', status=200)
@@ -109,7 +116,13 @@ class UserProvider(APIView):
                 'citizenship': user.selectedCitizenship,
                 'language': user.language,
                 'country': user.country,
-                'isSubscribed': user.isSubscribed
+                'isSubscribed': user.isSubscribed,
+                'product_details': {
+                    'subscription_plan': user.product_details.get('subscription_plan', ''),
+                    'subscription_price': user.product_details.get('subscription_price', ''),
+                    'subscription_currency': user.product_details.get('subscription_currency', ''),
+                    'subscription_id': user.product_details.get('subscription_id', '')
+                }
             }
               # Assuming the language is stored in the user's profile model
             return HttpResponse(json.dumps(data))
@@ -201,3 +214,20 @@ class ChangePasswordVerify(APIView):
         user.save()
 
         return Response({"message": "Password changed successfully."})
+
+
+class UserGoogleExists(TokenObtainPairView):
+    serializer_class = UserExistsSerializer
+
+    def post(self, request, *args, **kwargs):
+        user_data = request.data
+        serializer = self.serializer_class(data=user_data)
+        serializer.is_valid(raise_exception=True)
+
+        username = user_data.get('email')
+
+        try:
+            user = User.objects.get(email=username)
+            return Response({"message": "User exists in the database"}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({"message": "User doesn't exist in the database"}, status=status.HTTP_404_NOT_FOUND)

@@ -22,9 +22,7 @@ class RegistrationView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         registration = serializer.save()
 
-        email_body = f"Welcome to Hello.CH {registration.user.email}! \n" \
-                     f"Verify your email by copying the verification code below:\n\n" \
-                     f"CODE: {registration.verification_code}"
+        email_body = f"Welcome to Greetly.ch {registration.user.email}! \n"
 
         send_mail(
             'Welcome to Hello.CH',

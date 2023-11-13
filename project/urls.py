@@ -64,7 +64,10 @@ urlpatterns = [
     path('middleware-info/teamMembers/', include('teamMembers.urls')),
 
     # BOOKMARKS
-    path('middleware-info/bookmarks/', include('bookmark.urls'))
+    path('middleware-info/bookmarks/', include('bookmark.urls')),
+
+    # payments
+    path('middleware-info/payments/', include('payments.urls'))
 
 
 ]
