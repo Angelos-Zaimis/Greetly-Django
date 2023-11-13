@@ -128,3 +128,10 @@ class ChangePasswordVerifySerializer(serializers.Serializer):
             raise serializers.ValidationError("User with given email and code does not exist.")
 
         return data
+
+class UserExistsSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(required=True)
+
+    class Meta:
+        model = User
+        fields = ['email']
