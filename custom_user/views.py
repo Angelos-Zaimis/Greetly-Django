@@ -228,6 +228,6 @@ class UserGoogleExists(TokenObtainPairView):
 
         try:
             user = User.objects.get(email=username)
-            return Response({"message": "User exists in the database"}, status=status.HTTP_200_OK)
+            return Response({"message": f"{user} exists in the database"}, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({"message": "User doesn't exist in the database"}, status=status.HTTP_404_NOT_FOUND)
