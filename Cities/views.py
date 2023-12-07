@@ -8,7 +8,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import City, Category, SubCategory, Information
 from .serializers import InformationSerializer
-
+from django.contrib.sites.shortcuts import get_current_site
+from urllib.parse import unquote
 
 class GetCitiesView(ListAPIView):
     queryset = City.objects.all()
@@ -79,9 +80,6 @@ class CityCategoriesAPIView(APIView):
             return Response("City not found", status=404)
 
 
-from django.contrib.sites.shortcuts import get_current_site
-
-
 class CityCategorySubCategoriesAPIView(APIView):
     def get(self, request, city, category):
         try:
@@ -129,9 +127,6 @@ class CityCategorySubCategoriesAPIView(APIView):
                 subcategory['image'] = image_url
 
         return Response(serialized_subcategories)
-
-
-from urllib.parse import unquote
 
 
 class InformationView(APIView):

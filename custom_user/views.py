@@ -24,7 +24,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         serializer = self.serializer_class(data=user)
         serializer.is_valid(raise_exception=True)
         username = request.data.get('email')
-        user = User.objects.get(email=username)
+        user = User.objects.get(email__iexact=username)
         is_first_login = user.first_login
 
         if is_first_login:
@@ -105,7 +105,7 @@ class UserProvider(APIView):
         email = serializer.validated_data['email']
 
         try:
-            user = User.objects.get(email=email)
+            user = User.objects.get(email__iexact=email)
             data = {
                 'id': user.id,
                 'user': user.email,
@@ -227,7 +227,7 @@ class UserGoogleExists(TokenObtainPairView):
         username = user_data.get('email')
 
         try:
-            user = User.objects.get(email=username)
+            user = User.objects.get(email__iexact=username)
             return Response({"message": f"{user} exists in the database"}, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({"message": "User doesn't exist in the database"}, status=status.HTTP_404_NOT_FOUND)
