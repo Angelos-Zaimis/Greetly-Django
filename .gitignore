@@ -1,4 +1,4 @@
-.idea/
+s.idea/
 
 # Created by https://www.gitignore.io/api/macos,linux,django,python,pycharm
 
@@ -9,11 +9,12 @@
 __pycache__/
 local_settings.py
 db.sqlite3
-media/
+media/s
 static/
 envs/
 ### Linux ###
 *~
+staticfiles/
 
 # temporary files which can be created if a process still has a handle open of a deleted file
 .fuse_hidden*

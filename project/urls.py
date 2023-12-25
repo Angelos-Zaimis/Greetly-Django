@@ -55,7 +55,7 @@ urlpatterns = [
     # GET CITY , CATEGORY,INFORMATION
     path('middleware-info/cities/', include('Cities.urls')),
 
-    path('middleware-info/translateImage/', include('Translation.urls')),
+    path('middleware-info/translateImage/', include('translate.urls')),
 
     # LANGUAGE
     path('middleware-info/userInfo/', UserProvider.as_view(), name='get_userinfo'),

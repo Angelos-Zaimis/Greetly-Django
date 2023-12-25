@@ -61,8 +61,8 @@ INSTALLED_APPS = [
     'Cities',
     'teamMembers',
     'bookmark',
-    'Translation',
-    'payments'
+    'payments',
+    'translate'
 ]
 
 AUTH_USER_MODEL = 'custom_user.User'
