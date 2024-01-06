@@ -1,6 +1,5 @@
 from django.contrib import admin
-from Cities.models import City,SubCategory,Category, Information, Steps, Location
-# Register your models here.
+from Cities.models import City, SubCategory, Category, Information
 
 admin.site.register(City)
 admin.site.register(SubCategory)

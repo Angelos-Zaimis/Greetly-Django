@@ -1,7 +1,4 @@
 from django.db import models
-
-# Create your models here.
-from django.db import models
 from django.contrib.postgres.fields import ArrayField
 
 CANTON_CHOICES = (
@@ -41,28 +38,6 @@ class SubCategory(models.Model):
 
     def __str__(self):
         return f"ID: {self.id} Subcategory: {self.title} --- {self.category} "
-
-
-class Location(models.Model):
-    name = models.CharField(max_length=255, default='', null=True, blank=True)
-    address = models.CharField(max_length=255, default='', null=True, blank=True)
-    links = ArrayField(models.CharField(max_length=100), blank=True, default=list)
-
-    def __str__(self):
-        return self.name
-
-
-class Steps(models.Model):
-    name = models.CharField(max_length=1000, default='', null=True, blank=True)
-    tip = models.CharField(max_length=1000, default='', null=True, blank=True)
-    stepOne = models.CharField(max_length=1000, default='', null=True, blank=True)
-    stepTwo = models.CharField(max_length=1000, default='', null=True, blank=True)
-    stepThree = models.CharField(max_length=1000, default='', null=True, blank=True)
-    links = ArrayField(models.CharField(max_length=10000), blank=True, default=list)
-    linksNames = ArrayField(models.CharField(max_length=10000), blank=True, default=list)
-
-    def __str__(self):
-        return self.name
 
 
 class Information(models.Model):

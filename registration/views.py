@@ -1,16 +1,11 @@
-import json
-
 from django.core.mail import send_mail
 from django.http import HttpResponse
 from rest_framework import generics, status
+from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from .models import Registration
 from project import settings
 from registration.serializers import RegisterSerializer, VerifyRegistrationSerializer
-
-from rest_framework.exceptions import ValidationError
-# Create your views here.
 
 
 class RegistrationView(generics.GenericAPIView):
@@ -25,20 +20,18 @@ class RegistrationView(generics.GenericAPIView):
         email_body = f"Welcome to Greetly.ch {registration.user.email}! \n"
 
         send_mail(
-            'Welcome to Hello.CH',
+            'Welcome to Greetly.ch',
             email_body,
             settings.DEFAULT_FROM_EMAIL,
             [registration.user.email],
             fail_silently=False
         )
 
-
         data = {
             'user': registration.user.email,
-            'message': 'Successful Registration.',
         }
 
-        return HttpResponse(json.dumps(data), content_type='application/json', status=status.HTTP_200_OK)
+        return Response(data, content_type='application/json', status=status.HTTP_200_OK)
 
 
 class VerifyRegistrationView(APIView):
@@ -49,7 +42,7 @@ class VerifyRegistrationView(APIView):
         try:
             registration = Registration.objects.get(verification_code=code)
         except Registration.DoesNotExist:
-            return HttpResponse({'Invalid verification code.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "Invalid verification code"}, status=status.HTTP_400_BAD_REQUEST)
 
         user = registration.user
         if not user.is_verified:
@@ -59,4 +52,4 @@ class VerifyRegistrationView(APIView):
         registration.status = 'active'
         registration.save()
 
-        return HttpResponse({'Registration successful!'}, status=status.HTTP_200_OK)
+        return Response({"message": "Registration successful!"}, status=status.HTTP_200_OK)

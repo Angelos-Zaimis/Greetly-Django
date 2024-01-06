@@ -19,8 +19,7 @@ from django.urls import path, include
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-from rest_framework_simplejwt import views as jwt_views
-from custom_user.views import CustomTokenObtainPairView,UserProvider
+from custom_user.views import UserProvider
 from django.conf import settings
 
 
@@ -61,7 +60,7 @@ urlpatterns = [
     path('middleware-info/userInfo/', UserProvider.as_view(), name='get_userinfo'),
 
     # TEAM MEMBERS
-    path('middleware-info/teamMembers/', include('teamMembers.urls')),
+    path('middleware-info/professionals/', include('professionals.urls')),
 
     # BOOKMARKS
     path('middleware-info/bookmarks/', include('bookmark.urls')),

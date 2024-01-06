@@ -1,5 +1,4 @@
-from django.shortcuts import render
-from bookmark.serializers import BookmakrkSerializer, BookmakrkCreateSerializer
+from bookmark.serializers import BookmarkSerializer
 from bookmark.models import BookMark
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -10,37 +9,40 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
-# Create your views here.
-
-
 class BookMarkList(APIView):
     def get(self, request):
         user_email = request.query_params.get('user_email')
+
         try:
             user = User.objects.get(email=user_email)
         except User.DoesNotExist:
-            return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
 
         bookmarks = BookMark.objects.filter(user=user)
-        serializer = BookmakrkSerializer(bookmarks, many=True)
-        return Response(serializer.data)
 
+        if len(bookmarks) == 0:
+            return Response({'message': 'Bookmarks not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = BookmarkSerializer(bookmarks, many=True)
+        return Response(serializer.data)
 
     def post(self, request):
         user_email = request.query_params.get('user_email')
         try:
             user = User.objects.get(email=user_email)
         except User.DoesNotExist:
-            return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = BookmakrkSerializer(data=request.data)
+        serializer = BookmarkSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class BookMarkRetrieveDestroyView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = BookmakrkSerializer
+    serializer_class = BookmarkSerializer
     lookup_field = 'uniqueTitle'
 
     def get_queryset(self):
@@ -48,7 +50,7 @@ class BookMarkRetrieveDestroyView(generics.RetrieveUpdateDestroyAPIView):
         try:
             user = User.objects.get(email=user_email)
         except User.DoesNotExist:
-            return BookMark.objects.none()
+            return Response({'message': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
 
         return BookMark.objects.filter(user=user)
 

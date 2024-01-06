@@ -1,18 +1,21 @@
-import random
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+import random
+import time
 
-# Create your models here.
 
 def generate_code(length=5):
+    random.seed(time.time())  # Seed based on the current time
     numbers = '0123456789'
     return ''.join(random.choice(numbers) for _ in range(length))
+
 
 def default_product_details():
     return {'subscription_price': '', 'subscription_plan': '', 'subscription_currency': '', 'subscription_id': ''}
 
+
 class User(AbstractUser):
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
     first_login = models.BooleanField(default=True)
     isSubscribed = models.BooleanField(default=False)
@@ -28,4 +31,3 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"ID: {self.id} email: {self.email}"
-

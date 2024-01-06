@@ -1,12 +1,10 @@
 import re
 import socket
-
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator
 from rest_framework import serializers
-
-from registration.countries import NON_EU_EFTA_COUNTRIES, EU_COUNTRIES,UK_COUNTRIES
+from registration.countries import NON_EU_EFTA_COUNTRIES, EU_COUNTRIES, UK_COUNTRIES
 from registration.languages import COUNTRY_LANGUAGES
 from registration.models import Registration
 
@@ -19,8 +17,8 @@ def get_language(country):
             return item['language']
     return 'English'
 
-def custom_email_validator(value):
 
+def custom_email_validator(value):
     try:
         EmailValidator()(value)
     except ValidationError:
@@ -67,10 +65,7 @@ def custom_password_validator(value):
         raise ValidationError('Password must contain at least one lowercase letter.')
 
 
-
-
 class RegisterSerializer(serializers.ModelSerializer):
-
     email = serializers.EmailField(validators=[custom_email_validator])
     password = serializers.CharField(validators=[custom_password_validator])
     selectedCountry = serializers.CharField(required=True)
@@ -78,11 +73,9 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Registration
-        fields = ['email','password','selectedCountry','status']
-
+        fields = ['email', 'password', 'selectedCountry', 'status']
 
     def create(self, validated_data):
-
 
         country = validated_data.get('selectedCountry')
 
@@ -98,9 +91,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             else:
                 raise serializers.ValidationError('Invalid country')
 
-
-
-
         user = User.objects.create_user(username=validated_data['email'],
                                         email=validated_data['email'],
                                         password=validated_data['password'],
@@ -109,7 +99,6 @@ class RegisterSerializer(serializers.ModelSerializer):
                                         country=country,
                                         language=get_language(country)
                                         )
-        # Create a new registration instance with the user and verification code
         registration = Registration.objects.create(user=user)
         return registration
 
@@ -117,7 +106,6 @@ class RegisterSerializer(serializers.ModelSerializer):
 class VerifyRegistrationSerializer(serializers.Serializer):
     verification_code = serializers.IntegerField(required=True)
 
-
     class Meta:
-        model =Registration
+        model = Registration
         fields = ['verification_code']
