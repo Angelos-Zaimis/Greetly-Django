@@ -1,5 +1,3 @@
-import json
-from django.http import HttpResponse
 from requests import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -11,6 +9,7 @@ from registration.countries import EU_COUNTRIES, NON_EU_EFTA_COUNTRIES, UK_COUNT
 from project import settings
 from django.core.mail import send_mail
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.response import Response
 
 User = get_user_model()
 
@@ -19,7 +18,6 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = UserSerializer
 
     def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
         user = request.data
         serializer = self.serializer_class(data=user)
         serializer.is_valid(raise_exception=True)
@@ -28,7 +26,6 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         is_first_login = user.first_login
 
         if is_first_login:
-            # Update the user's first_login field in the database
             user.first_login = False
             user.save()
 
@@ -40,8 +37,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             'message': 'Successful login.',
             'username': user.email,
             'tokens': {
-                'access':str(refresh.access_token),
-                'refresh':str(refresh)
+                'access': str(refresh.access_token),
+                'refresh': str(refresh)
             },
             'first_login': is_first_login,
             'status': user.status,
@@ -58,8 +55,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             }
         }
 
-        return HttpResponse(json.dumps(data), content_type='application/json', status=200)
-
+        return Response(data, content_type='application/json', status=status.HTTP_200_OK)
 
     def delete(self, request, *args, **kwargs):
         username = request.data.get('email')
@@ -69,14 +65,13 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             data = {
                 'message': 'User deleted successfully.'
             }
-            return HttpResponse(json.dumps(data), content_type='application/json', status=200)
+            return Response(data, content_type='application/json', status=status.HTTP_200_OK)
 
         except User.DoesNotExist:
             data = {
                 'message': 'User not found.'
             }
-            return HttpResponse(json.dumps(data), content_type='application/json', status=404)
-
+            return Response(data, content_type='application/json', status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request, *args, **kwargs):
         user = request.user
@@ -89,7 +84,6 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             'user': user.email,
             'message': 'User updated successfully.',
             'username': user.email,
-            # Include any other fields you want to return
             'status': user.status,
             'citizenship': user.selectedCitizenship,
             'language': user.language,
@@ -97,6 +91,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         }
 
         return Response(data, status=status.HTTP_200_OK)
+
 
 class UserProvider(APIView):
     def get(self, request):
@@ -111,7 +106,6 @@ class UserProvider(APIView):
                 'user': user.email,
                 'message': 'User updated successfully.',
                 'username': user.email,
-                # Include any other fields you want to return
                 'status': user.status,
                 'citizenship': user.selectedCitizenship,
                 'language': user.language,
@@ -124,10 +118,9 @@ class UserProvider(APIView):
                     'subscription_id': user.product_details.get('subscription_id', '')
                 }
             }
-              # Assuming the language is stored in the user's profile model
-            return HttpResponse(json.dumps(data))
+            return Response(data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
-            return HttpResponse(status=404, content='User not found')
+            return Response({"message": "Users info not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request):
         serializer = LanguageSerializerPut(data=request.data)
@@ -158,9 +151,9 @@ class UserProvider(APIView):
                 user.selectedCitizenship = citizenship
 
             user.save()
-            return HttpResponse(content='Property updated successfully')
+            return Response({"message": "Property updated successfully"}, status=status.HTTP_200_OK)
         except User.DoesNotExist:
-            return HttpResponse(content='User not found', status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class ChangePasswordView(generics.GenericAPIView):
@@ -174,9 +167,13 @@ class ChangePasswordView(generics.GenericAPIView):
         try:
             user = User.objects.get(email=user_email)
         except User.DoesNotExist:
-            return Response({'error': 'User with this email does not exist'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'message': 'User with this email does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
-        email_body = 'Welcome back ' + user.username.capitalize() + '!' + ' Did you forget your password? No worries \n Copy this code to verify and change your password \n' + 'CODE: ' + str(
+        email_body = 'Welcome back ' + user.username.capitalize() + '!' + '\n' + 'Did you forget your password?\n No ' \
+                                                                                 'worries ' \
+                                                                                 '\n Copy this code to verify and ' \
+                                                                                 'change ' \
+                                                                                 'your password \n' + 'CODE: ' + str(
             user.code)
 
         send_mail(
@@ -187,10 +184,7 @@ class ChangePasswordView(generics.GenericAPIView):
             fail_silently=False
         )
 
-        return HttpResponse(content='Check your emails, you have received a code to change your password.')
-
-
-from rest_framework.response import Response
+        return Response({"message": "Check your emails, you have received a code to change your password"})
 
 class ChangePasswordVerify(APIView):
     serializer_class = ChangePasswordVerifySerializer
@@ -208,7 +202,8 @@ class ChangePasswordVerify(APIView):
         try:
             user = User.objects.get(email=email, code=code)
         except User.DoesNotExist:
-            return Response({'error': 'User with this email and code combination does not exist'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'message': 'User with this email and code combination does not exist'},
+                            status=status.HTTP_404_NOT_FOUND)
 
         user.set_password(password)
         user.save()

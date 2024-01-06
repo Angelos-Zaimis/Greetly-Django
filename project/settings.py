@@ -35,15 +35,17 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['middleware-information-b3a171d27812.herokuapp.com']
 
-CORS_ALLOWED_ORIGINS = ['https://middleware-information-b3a171d27812.herokuapp.com', 'http://localhost:*', 'exp://192.168.1.22:19000']
+CORS_ALLOWED_ORIGINS = ['https://middleware-information-b3a171d27812.herokuapp.com']
+
+CSRF_TRUSTED_ORIGINS = ['https://middleware-information-b3a171d27812.herokuapp.com']
 
 
 if SERVER_TYPE != 'production':
-    ALLOWED_HOSTS += ['http://127.0.0.1', 'exp://192.168.1.22:19000', 'http://localhost:*','127.0.0.1','localhost']
-
-# Add your development machine IP address and iPhone IP address
-
-# Application definition
+    ALLOWED_HOSTS += ['middleware-info', 'localhost', '172.20.10.2', '127.0.0.1', '172.20.10.2:8081']
+    CORS_ALLOWED_ORIGINS = ['https://middleware-information-b3a171d27812.herokuapp.com', 'http://localhost:*', 'exp'
+                                                                                                               '://172.20.10.2:8081', 'http://127.0.0.1:*']
+    CSRF_TRUSTED_ORIGINS = ['https://middleware-information-b3a171d27812.herokuapp.com', 'http://localhost:*', 'exp'
+                                                                                                               '://172.20.10.2:8081', 'http://127.0.0.1:*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -59,10 +61,10 @@ INSTALLED_APPS = [
     'custom_user',
     'registration',
     'Cities',
-    'teamMembers',
     'bookmark',
     'payments',
-    'translate'
+    'translate',
+    'professionals'
 ]
 
 AUTH_USER_MODEL = 'custom_user.User'
@@ -82,9 +84,6 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'project.urls'
-
-
-CSRF_TRUSTED_ORIGINS = ['https://middleware-information-b3a171d27812.herokuapp.com', 'http://127.0.0.1', 'exp://192.168.1.22:19000', 'http://localhost:*']
 
 TEMPLATES = [
     {
@@ -148,7 +147,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-# Authentication
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
@@ -209,6 +208,9 @@ EMAIL_HOST= os.environ.get('EMAIL_HOST')
 EMAIL_HOST_USER= os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD= os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_PORT= os.environ.get('EMAIL_PORT')
+STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
+STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET')
 
 SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,  # Change settings to True to enable Django Login option
@@ -221,6 +223,3 @@ SWAGGER_SETTINGS = {
     }
 }
 
-STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY')
-STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY')
-STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET')

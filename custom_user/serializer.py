@@ -1,10 +1,11 @@
 import socket
-from rest_framework import serializers
+from rest_framework import serializers, status
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import get_user_model, authenticate
 from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator
 import re
+from rest_framework.response import Response
 
 User = get_user_model()
 
@@ -24,19 +25,6 @@ def custom_email_validator(value):
     if not re.match(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', value):
         raise ValidationError('Email is missing username or domain')
 
-    # Check for valid domain
-    domain = value.split('@')[1]
-    try:
-        _, _, addresses = socket.gethostbyname_ex(domain)
-        if not addresses:
-            raise ValidationError('Email domain does not exist')
-    except (socket.herror, socket.gaierror):
-        raise ValidationError('Email domain does not exist')
-
-    # Check for valid TLD
-    tld = domain.split('.')[-1]
-    if not re.match(r'[a-zA-Z]{2,}', tld):
-        raise ValidationError('Invalid email top-level domain')
 
     # Check for email length
     if len(value) > 254:
@@ -70,7 +58,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'password', 'status', 'selectedCitizenship','country' ]
+        fields = ['email', 'password', 'status', 'selectedCitizenship', 'country']
 
     def validate(self, data):
         email = data.get('email')
@@ -79,7 +67,7 @@ class UserSerializer(serializers.ModelSerializer):
         # Authenticate the user with the provided credentials
         user = authenticate(email=email, password=password)
         if not user:
-            raise serializers.ValidationError('Invalid email or password')
+            return Response({'message': 'Invalid email or Password'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Add the authenticated user to the validated data dictionary
         data['user'] = user
@@ -104,15 +92,18 @@ class LanguageSerializerPut(serializers.Serializer):
         model = User
         fields = '__all__'
 
+
 class ChangePasswordSerializer(serializers.Serializer):
     email = serializers.EmailField()
 
-    def validate_email(self, value):
+    @staticmethod
+    def validate_email(value):
         try:
             User.objects.get(email=value)
         except User.DoesNotExist:
-            raise serializers.ValidationError("User with this email does not exist")
+            return Response({'message': 'User with this email does not exist'}, status=status.HTTP_404_NOT_FOUND)
         return value
+
 
 class ChangePasswordVerifySerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
@@ -125,9 +116,9 @@ class ChangePasswordVerifySerializer(serializers.Serializer):
         try:
             user = User.objects.get(email=email, code=code)
         except User.DoesNotExist:
-            raise serializers.ValidationError("User with given email and code does not exist.")
-
+            return Response({'message': 'User with this email does not exist or code is wrong'}, status=status.HTTP_404_NOT_FOUND)
         return data
+
 
 class UserExistsSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
