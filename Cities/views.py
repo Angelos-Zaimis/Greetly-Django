@@ -20,10 +20,7 @@ class GetCitiesBasedOnCategory(ListAPIView):
     serializer_class = CitySerializer
 
     def get_queryset(self):
-        canton_region = self.request.query_params.get('canton_region')
-
-        if not canton_region:
-            return Response({'message': {'Region doesnt exist'}}, status=status.HTTP_404_NOT_FOUND)
+        canton_region = self.request.query_params.get('region')
 
         queryset = City.objects.filter(canton_region=canton_region)
         return queryset
