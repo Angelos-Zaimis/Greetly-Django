@@ -19,11 +19,25 @@ class GetCitiesView(ListAPIView):
 class GetCitiesBasedOnCategory(ListAPIView):
     serializer_class = CitySerializer
 
+class GetCitiesBasedOnCategory(ListAPIView):
+    serializer_class = CitySerializer
+
     def get_queryset(self):
         canton_region = self.request.query_params.get('region')
 
+        # Check if the region query parameter is empty or not provided
+        if not canton_region:
+            return Response({"message": "The 'region' query parameter cannot be empty."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Filter the queryset based on the canton_region
         queryset = City.objects.filter(canton_region=canton_region)
-        return queryset
+
+        # Check if the queryset is empty, which means no cities were found for the given region
+        if queryset.exists():
+            return queryset
+        else:
+            # Raise an Http404 exception with a custom message
+            return Response({"message": "No citites found in that region"}, status=status.HTTP_404_NOT_FOUND)
 
 
 # FETCHING CATEGORIES OF CITY
