@@ -13,6 +13,7 @@ class City(models.Model):
     image = models.ImageField(upload_to='city_images/', default='', blank=True)
     table_image = models.ImageField(upload_to='city_images/', default='', blank=True)
     canton_region = models.CharField(max_length=20, choices=CANTON_CHOICES, default='')
+    cantons_flag = models.ImageField(upload_to='cantons_icons/', default='', blank=True)
 
     def __str__(self):
         return f"ID: {self.id} Canton: {self.name}"

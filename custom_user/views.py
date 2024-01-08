@@ -128,7 +128,7 @@ class UserProvider(APIView):
         email = serializer.validated_data['email']
         language = serializer.validated_data.get('language')
         country = serializer.validated_data.get('country')
-        status = serializer.validated_data.get('status')
+        user_status = serializer.validated_data.get('status')
 
         try:
             user = User.objects.get(email=email)
@@ -136,8 +136,8 @@ class UserProvider(APIView):
             if language:
                 user.language = language
 
-            if status:
-                user.status = status
+            if user_status:
+                user.status = user_status
 
             if country:
                 user.country = country
