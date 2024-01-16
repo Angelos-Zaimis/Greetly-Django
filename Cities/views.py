@@ -8,6 +8,7 @@ from .models import City, Category, SubCategory, Information
 from .serializers import InformationSerializer
 from django.contrib.sites.shortcuts import get_current_site
 from urllib.parse import unquote
+from rest_framework.permissions import IsAuthenticated
 
 
 class GetCitiesView(ListAPIView):
@@ -16,33 +17,32 @@ class GetCitiesView(ListAPIView):
 
 
 # FETCHES CITIES BASED ON REGION(FOR FUTURE IMPLEMENTATION)
-class GetCitiesBasedOnCategory(ListAPIView):
-    serializer_class = CitySerializer
+class GetCitiesBasedOnCategory(APIView):
+    permission_classes = [IsAuthenticated]
 
-class GetCitiesBasedOnCategory(ListAPIView):
-    serializer_class = CitySerializer
+    def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return Response({'detail': 'Authentication credentials were not provided.'},
+                            status=status.HTTP_401_UNAUTHORIZED)
 
-    def get_queryset(self):
-        canton_region = self.request.query_params.get('region')
-
-        # Check if the region query parameter is empty or not provided
+        canton_region = request.query_params.get('region')
         if not canton_region:
             return Response({"message": "The 'region' query parameter cannot be empty."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Filter the queryset based on the canton_region
         queryset = City.objects.filter(canton_region=canton_region)
-
-        # Check if the queryset is empty, which means no cities were found for the given region
         if queryset.exists():
-            return queryset
+            serializer = CitySerializer(queryset, many=True, context={'request': request})
+            return Response(serializer.data)
         else:
-            # Raise an Http404 exception with a custom message
-            return Response({"message": "No citites found in that region"}, status=status.HTTP_404_NOT_FOUND)
-
-
+            return Response({"message": "No cities found in that region"}, status=status.HTTP_404_NOT_FOUND)
 # FETCHING CATEGORIES OF CITY
 class CityCategoriesAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, city):
+        if not request.user.is_authenticated:
+            return Response({'detail': 'Authentication credentials were not provided.'},
+                            status=status.HTTP_401_UNAUTHORIZED)
         try:
             city_obj = City.objects.get(name=city)
             categories = Category.objects.filter(city=city_obj)
@@ -77,7 +77,11 @@ class CityCategoriesAPIView(APIView):
 
 # FETCHES THE SUBCATEGORY OF A CATEGORY
 class CityCategorySubCategoriesAPIView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, city, category):
+        if not request.user.is_authenticated:
+            return Response({'detail': 'Authentication credentials were not provided.'},
+                            status=status.HTTP_401_UNAUTHORIZED)
         try:
             city_obj = City.objects.get(name=city)
             category_obj = Category.objects.get(name=category, city=city_obj)
@@ -122,7 +126,12 @@ class CityCategorySubCategoriesAPIView(APIView):
 
 # GET INFORMATION FOR CATEGORY/SUBCATEGORY
 class InformationView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, city, category, subcategory, information):
+        if not request.user.is_authenticated:
+            return Response({'detail': 'Authentication credentials were not provided.'},
+                            status=status.HTTP_401_UNAUTHORIZED)
         try:
             city_obj = City.objects.get(name=city)
             category_obj = Category.objects.get(name=category, city=city_obj)

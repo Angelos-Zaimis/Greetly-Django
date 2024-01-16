@@ -1,4 +1,5 @@
 from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from professionals.models import Professionals
@@ -7,6 +8,7 @@ from professionals.serializers import ProfessionalSerializer
 
 class ProfessionalListView(generics.ListAPIView):
     serializer_class = ProfessionalSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         professional_type = self.request.query_params.get('type')

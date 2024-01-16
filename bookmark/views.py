@@ -1,3 +1,5 @@
+from rest_framework.permissions import IsAuthenticated
+
 from bookmark.serializers import BookmarkSerializer
 from bookmark.models import BookMark
 from rest_framework.views import APIView
@@ -10,7 +12,12 @@ User = get_user_model()
 
 
 class BookMarkList(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
+        if not request.user.is_authenticated:
+            return Response({'detail': 'Authentication credentials were not provided.'},
+                            status=status.HTTP_401_UNAUTHORIZED)
+
         user_email = request.query_params.get('user_email')
 
         try:
@@ -27,6 +34,10 @@ class BookMarkList(APIView):
         return Response(serializer.data)
 
     def post(self, request):
+        if not request.user.is_authenticated:
+            return Response({'detail': 'Authentication credentials were not provided.'},
+                            status=status.HTTP_401_UNAUTHORIZED)
+
         user_email = request.query_params.get('user_email')
         try:
             user = User.objects.get(email=user_email)
@@ -42,6 +53,7 @@ class BookMarkList(APIView):
 
 
 class BookMarkRetrieveDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
     serializer_class = BookmarkSerializer
     lookup_field = 'uniqueTitle'
 
@@ -55,6 +67,9 @@ class BookMarkRetrieveDestroyView(generics.RetrieveUpdateDestroyAPIView):
         return BookMark.objects.filter(user=user)
 
     def delete(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return Response({'detail': 'Authentication credentials were not provided.'},
+                            status=status.HTTP_401_UNAUTHORIZED)
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)

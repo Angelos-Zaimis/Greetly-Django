@@ -5,14 +5,17 @@ from django.views import View
 import stripe
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from custom_user.models import User
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
-class CreateCheckoutSessionView(View):
+class CreateCheckoutSessionView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         body_data = json.loads(request.body.decode('utf-8'))
@@ -89,8 +92,8 @@ def stripe_webhook(request):
     return Response(status=status.HTTP_200_OK)
 
 
-class CancelSubscription(View):
-
+class CancelSubscription(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body.decode('utf-8'))
         user_email = data.get('email')

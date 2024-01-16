@@ -1,4 +1,5 @@
 from requests import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import get_user_model
@@ -29,7 +30,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             user.first_login = False
             user.save()
 
-        refresh = RefreshToken.for_user(user)  # Generate a refresh token for this user
+        refresh = RefreshToken.for_user(user)
+
 
         data = {
             'id': user.id,
@@ -94,7 +96,11 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 
 class UserProvider(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
+        if not request.user.is_authenticated:
+            return Response({'detail': 'Authentication credentials were not provided.'},
+                            status=status.HTTP_401_UNAUTHORIZED)
         serializer = UserInfosSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data['email']
@@ -123,6 +129,10 @@ class UserProvider(APIView):
             return Response({"message": "Users info not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request):
+        if not request.user.is_authenticated:
+            return Response({'detail': 'Authentication credentials were not provided.'},
+                            status=status.HTTP_401_UNAUTHORIZED)
+
         serializer = LanguageSerializerPut(data=request.data)
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data['email']
