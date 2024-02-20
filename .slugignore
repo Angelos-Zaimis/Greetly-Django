@@ -1,0 +1,25 @@
+# Development-specific files
+Dockerfile
+docker-compose.yml
+.dockerignore
+*.md
+requirements.yml
+installed_packages.txt
+greetly-394820-b05f8648a82b.json
+entrypoint.sh
+
+# Backup and data files that aren't needed in production
+backup.json
+db.json
+outputfile.json
+
+
+# Documentation and examples
+README.md
+
+# Temporary or local development files
+*.log
+*.pyc
+__pycache__/
+.env
+.env.example
