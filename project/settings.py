@@ -39,10 +39,10 @@ CORS_ALLOWED_ORIGINS = ['https://middleware-information-b3a171d27812.herokuapp.c
 CSRF_TRUSTED_ORIGINS = ['https://middleware-information-b3a171d27812.herokuapp.com']
 
 if SERVER_TYPE != 'production':
-    ALLOWED_HOSTS += ['middleware-info', 'localhost', '172.20.10.2', '127.0.0.1', '172.20.10.2', '172.20.10.2:8081']
+    ALLOWED_HOSTS += ['middleware-info', 'localhost', '172.20.10.2', '127.0.0.1', '172.20.10.2:*', '172.20.10.2:8081', '10.0.2.2', '10.0.2.2:8081','http://10.0.2.2:8081','http://172.20.10.2:8081']
     CORS_ALLOW_ALL_ORIGINS = True
     CSRF_TRUSTED_ORIGINS = ['https://middleware-information-b3a171d27812.herokuapp.com', 'http://localhost:*', 'exp'
-                                                                                                               '://172.20.10', 'http://127.0.0.1:*']
+                                                                                                               '://172.20.10', 'http://127.0.0.1:*', 'http://10.0.2.2:8081', 'http://172.20.10.2:8081']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
