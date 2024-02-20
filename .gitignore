@@ -106,6 +106,10 @@ crashlytics-build.properties
 fabric.properties
 staticfiles/
 .slugignore
+*.psd
+*.pdf
+/test
+/spec
 ### PyCharm Patch ###
 # Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
 
