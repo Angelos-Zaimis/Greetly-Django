@@ -42,3 +42,8 @@ installed_packages.txt
 /app/db.json
 /app/backup.json
 /app/outputfile.json
+
+*.psd
+*.pdf
+/test
+/spec
