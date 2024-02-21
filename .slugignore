@@ -1,4 +1,5 @@
-# Development-specific files
+# .slugignore
+
 Dockerfile
 docker-compose.yml
 .dockerignore

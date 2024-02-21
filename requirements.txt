@@ -3,6 +3,7 @@ boto3==1.26.64
 botocore==1.29.84
 cachetools==5.3.1
 certifi==2023.7.22
+chardet==4.0.0
 charset-normalizer==3.0.1
 coreapi==2.3.3
 coreschema==0.0.4
@@ -12,6 +13,7 @@ django-cors-headers==3.13.0
 django-countries-plus==2.1.0
 django-dotenv==1.4.2
 django-filter==22.1
+django-multiselectfield==0.1.12
 django-storages==1.13.2
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.2.2
@@ -34,7 +36,6 @@ Markdown==3.4.1
 MarkupSafe==2.1.2
 packaging==23.0
 Pillow==9.4.0
-pip==23.2.1
 proto-plus==1.22.3
 protobuf==4.23.4
 psycopg2-binary==2.9.5
@@ -49,11 +50,9 @@ rsa==4.9
 ruamel.yaml==0.17.21
 ruamel.yaml.clib==0.2.7
 s3transfer==0.6.0
-setuptools==65.6.3
 six==1.16.0
 sqlparse==0.4.3
+stripe==2.55.2
 uritemplate==4.1.1
 urllib3==1.26.14
-wheel==0.38.4
 whitenoise==6.3.0
-stripe==2.55.2
