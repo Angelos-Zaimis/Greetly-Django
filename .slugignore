@@ -49,3 +49,10 @@ installed_packages.txt
 *.pdf
 /test
 /spec
+
+Dockerfile
+docker-compose.yml
+backup.json
+db.json
+outputfile.json
+static/
