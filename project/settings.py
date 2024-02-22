@@ -199,8 +199,6 @@ SIMPLE_JWT = {
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-
 if SERVER_TYPE == 'production':
     # production settings
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'  # AWS SDK
