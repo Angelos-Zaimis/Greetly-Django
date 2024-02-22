@@ -43,7 +43,6 @@ class SubCategory(models.Model):
 class Information(models.Model):
     title = models.CharField(max_length=100)
     subtitle = models.CharField(max_length=100, default='')
-    descriptions = models.CharField(max_length=1000)
     subcategory = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
     content = models.JSONField(default=dict)  # Set a default value
     image = models.ImageField(upload_to='category_images/', default='', blank=True)
