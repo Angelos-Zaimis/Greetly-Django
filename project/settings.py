@@ -196,15 +196,16 @@ SIMPLE_JWT = {
 #     os.path.join(BASE_DIR, 'static'),
 # )
 
-STATIC_URL = 'staticfiles/'
+STATIC_URL = 'static/'
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STATIC_ROOT = 'staticfiles/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
 if SERVER_TYPE == 'production':
     # production settings
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'  # AWS SDK]
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'  # AWS SDK
     AWS_ACCESS_KEY_ID = os.environ.get(
         'DO_SPACES_ACCESS_KEY')  # Spaces access key
     AWS_SECRET_ACCESS_KEY = os.environ.get(
