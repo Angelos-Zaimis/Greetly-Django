@@ -18,7 +18,6 @@ class City(models.Model):
     def __str__(self):
         return f"ID: {self.id} Canton: {self.name}"
 
-
 class Category(models.Model):
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=100, default='')
