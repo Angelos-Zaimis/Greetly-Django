@@ -97,7 +97,8 @@ class RegisterSerializer(serializers.ModelSerializer):
                                         status=validated_data['status'],
                                         selectedCitizenship=citizenship,
                                         country=country,
-                                        language=get_language(country)
+                                        language=get_language(country),
+                                        is_active=True
                                         )
         registration = Registration.objects.create(user=user)
         return registration
