@@ -64,12 +64,10 @@ class UserSerializer(serializers.ModelSerializer):
         email = data.get('email')
         password = data.get('password')
 
-        # Authenticate the user with the provided credentials
         user = authenticate(email=email, password=password)
         if not user:
-            return Response({'message': 'Invalid email or Password'}, status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError({'message': 'Invalid email or password.'})
 
-        # Add the authenticated user to the validated data dictionary
         data['user'] = user
         return data
 
