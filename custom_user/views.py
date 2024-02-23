@@ -218,7 +218,7 @@ class ChangePasswordVerify(APIView):
         user.set_password(password)
         user.save()
 
-        return Response({"message": "Password changed successfully."})
+        return Response({"message": "Password changed successfully."}, status=status.HTTP_200_OK)
 
 
 class UserGoogleExists(TokenObtainPairView):

@@ -114,7 +114,7 @@ class ChangePasswordVerifySerializer(serializers.Serializer):
         try:
             user = User.objects.get(email=email, code=code)
         except User.DoesNotExist:
-            return Response({'message': 'User with this email does not exist or code is wrong'}, status=status.HTTP_404_NOT_FOUND)
+            raise ValidationError({'message': 'User with this email does not exist or code is wrong'})
         return data
 
 
