@@ -62,7 +62,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     def delete(self, request, *args, **kwargs):
         username = request.data.get('email')
         try:
-            user = User.objects.get(email=username)
+            user = User.objects.get(email__iexact=username)
+
             user.delete()
             data = {
                 'message': 'User deleted successfully.'
@@ -175,7 +176,7 @@ class ChangePasswordView(generics.GenericAPIView):
 
         user_email = serializer.validated_data['email']
         try:
-            user = User.objects.get(email=user_email)
+            user = User.objects.get(email__iexact=user_email)
         except User.DoesNotExist:
             return Response({'message': 'User with this email does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -210,7 +211,7 @@ class ChangePasswordVerify(APIView):
         password = validated_data.get('password')
 
         try:
-            user = User.objects.get(email=email, code=code)
+            user = User.objects.get(email__iexact=email, code=code)
         except User.DoesNotExist:
             return Response({'message': 'User with this email and code combination does not exist'},
                             status=status.HTTP_404_NOT_FOUND)
