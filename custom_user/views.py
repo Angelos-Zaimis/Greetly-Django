@@ -1,3 +1,6 @@
+from datetime import time
+from random import random
+
 from requests import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -14,6 +17,10 @@ from rest_framework.response import Response
 
 User = get_user_model()
 
+def generate_code(length=5):
+    random.seed(time.time())  # Seed based on the current time
+    numbers = '0123456789'
+    return ''.join(random.choice(numbers) for _ in range(length))
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = UserSerializer
@@ -180,9 +187,11 @@ class ChangePasswordView(generics.GenericAPIView):
         except User.DoesNotExist:
             return Response({'message': 'User with this email does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
-        email_body = 'Welcome back ' + user.username.capitalize() + '!' + '\n' + 'Did you forget your password?\n No ' \
+        user.code = generate_code()
+        user.save()
+        email_body = 'Welcome back ' + user.username.capitalize() + '!' + '\n' + 'Did you forget your password?\nNo ' \
                                                                                  'worries ' \
-                                                                                 '\n Copy this code to verify and ' \
+                                                                                 '\nCopy this code to verify and ' \
                                                                                  'change ' \
                                                                                  'your password \n' + 'CODE: ' + str(
             user.code)
