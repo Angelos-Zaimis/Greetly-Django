@@ -1,6 +1,3 @@
-from datetime import time
-from random import random
-
 from requests import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -16,6 +13,10 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 
 User = get_user_model()
+
+import random
+import time
+
 
 def generate_code(length=5):
     random.seed(time.time())  # Seed based on the current time
