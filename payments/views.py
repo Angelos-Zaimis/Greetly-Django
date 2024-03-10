@@ -1,16 +1,15 @@
 import json
 from django.conf import settings
 from django.core.mail import send_mail
-import stripe
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from custom_user.models import User
+from custom_user.models import User  # Adjust the import path based on your project structure
+import stripe
+from rest_framework.views import APIView
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
-
 
 class CreateCheckoutSessionView(APIView):
 
@@ -67,10 +66,9 @@ def stripe_webhook(request):
 
         customer_email = session['customer_details']['email']
 
-
         send_mail(
             subject="Monthly subscription",
-            message="Thank you very much for your purchase.You monthly subscription is now active.",
+            message="Thank you very much for your purchase. Your monthly subscription is now active.",
             recipient_list=[customer_email],
             from_email="www.greetly.ch"
         )
@@ -78,14 +76,13 @@ def stripe_webhook(request):
         user = User.objects.get(email=user_email)
         user.isSubscribed = True
         user.product_details['subscription_price'] = session['amount_total']
-        user.product_details['subscription_plan'] = session['line_items']['data'][0]['price']['recurring'][
-                'interval']
+        user.product_details['subscription_plan'] = session['line_items']['data'][0]['price']['recurring']['interval']
         user.product_details['subscription_currency'] = session['line_items']['data'][0]['currency']
         user.product_details['subscription_id'] = session['subscription']
 
         user.save()
 
-    return Response(status=status.HTTP_200_OK)
+    return Response({"message": "Webhook received"}, status=status.HTTP_200_OK)
 
 
 class CancelSubscription(APIView):
