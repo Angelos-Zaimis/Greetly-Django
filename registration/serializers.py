@@ -92,7 +92,7 @@ class RegisterSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError('Invalid country')
 
         user = User.objects.create_user(username=validated_data['email'],
-                                        email=validated_data['email'],
+                                        email=validated_data['email'].lower(),
                                         password=validated_data['password'],
                                         status=validated_data['status'],
                                         selectedCitizenship=citizenship,

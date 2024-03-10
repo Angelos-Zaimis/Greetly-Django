@@ -21,7 +21,7 @@ class BookMarkList(APIView):
         user_email = request.query_params.get('user_email')
 
         try:
-            user = User.objects.get(email=user_email)
+            user = User.objects.get(email=user_email.lower())
         except User.DoesNotExist:
             return Response({'message': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -40,7 +40,7 @@ class BookMarkList(APIView):
 
         user_email = request.query_params.get('user_email')
         try:
-            user = User.objects.get(email=user_email)
+            user = User.objects.get(email=user_email.lower())
         except User.DoesNotExist:
             return Response({'message': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -60,7 +60,7 @@ class BookMarkRetrieveDestroyView(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         user_email = self.request.query_params.get('user_email')
         try:
-            user = User.objects.get(email=user_email)
+            user = User.objects.get(email=user_email.lower())
         except User.DoesNotExist:
             return Response({'message': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
 

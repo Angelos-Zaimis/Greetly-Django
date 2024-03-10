@@ -1,6 +1,5 @@
 from requests import Response
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import get_user_model
 from custom_user.serializer import UserSerializer, UserInfosSerializer, LanguageSerializerPut, ChangePasswordSerializer, \
@@ -36,7 +35,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         serializer = self.serializer_class(data=user)
         serializer.is_valid(raise_exception=True)
         username = request.data.get('email')
-        user = User.objects.get(email__iexact=username)
+        user = User.objects.get(email=username.lower())
         is_first_login = user.first_login
 
         if is_first_login:
@@ -75,7 +74,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     def delete(self, request, *args, **kwargs):
         username = request.data.get('email')
         try:
-            user = User.objects.get(email__iexact=username)
+            user = User.objects.get(email=username.lower())
 
             user.delete()
             data = {
@@ -121,7 +120,7 @@ class UserProvider(APIView):
         email = serializer.validated_data['email']
 
         try:
-            user = User.objects.get(email__iexact=email)
+            user = User.objects.get(email=email.lower())
             data = {
                 'id': user.id,
                 'user': user.email,
@@ -155,7 +154,7 @@ class UserProvider(APIView):
         user_status = serializer.validated_data.get('status')
 
         try:
-            user = User.objects.get(email=email)
+            user = User.objects.get(email=email.lower())
 
             if language:
                 user.language = language
@@ -189,7 +188,7 @@ class ChangePasswordView(generics.GenericAPIView):
 
         user_email = serializer.validated_data['email']
         try:
-            user = User.objects.get(email__iexact=user_email)
+            user = User.objects.get(email=user_email.lower())
         except User.DoesNotExist:
             return Response({'message': 'User with this email does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -227,7 +226,7 @@ class ChangePasswordVerify(APIView):
         password = validated_data.get('password')
 
         try:
-            user = User.objects.get(email__iexact=email, code=code)
+            user = User.objects.get(email=email.lower(), code=code)
         except User.DoesNotExist:
             return Response({'message': 'User with this email and code combination does not exist'},
                             status=status.HTTP_404_NOT_FOUND)
@@ -249,7 +248,7 @@ class UserGoogleExists(TokenObtainPairView):
         username = user_data.get('email')
 
         try:
-            user = User.objects.get(email__iexact=username)
+            user = User.objects.get(email=username.lower())
             return Response({"message": f"{user} exists in the database"}, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({"message": "User doesn't exist in the database"}, status=status.HTTP_404_NOT_FOUND)
@@ -267,7 +266,7 @@ class GoogleLoginView(APIView):
             # You may want to check if the user exists in your database and create one if needed
 
             # Check if the user exists in the database based on email
-            user = User.objects.get(email=idinfo['email'])
+            user = User.objects.get(email=idinfo['email'].lower())
 
             # Generate JWT token
 

@@ -109,7 +109,7 @@ class CancelSubscription(APIView):
             subscription_id,
         )
 
-        user = User.objects.get(email=user_email)
+        user = User.objects.get(email=user_email.lower())
 
         user.isSubscribed = False
         user.product_details['subscription_price'] = ""
