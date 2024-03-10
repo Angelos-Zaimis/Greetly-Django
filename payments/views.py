@@ -110,18 +110,16 @@ class CancelSubscription(APIView):
             subscription_id,
         )
 
-        if response.cancellation_details:
-            user = User.objects.get(email=user_email)
+        user = User.objects.get(email=user_email)
 
-            user.isSubscribed = False
-            user.product_details['subscription_price'] = ""
-            user.product_details['subscription_plan'] = ""
-            user.product_details['subscription_currency'] = ""
-            user.product_details['subscription_id'] = ""
+        user.isSubscribed = False
+        user.product_details['subscription_price'] = ""
+        user.product_details['subscription_plan'] = ""
+        user.product_details['subscription_currency'] = ""
+        user.product_details['subscription_id'] = ""
 
-            user.save()
+        user.save()
 
-            return JsonResponse({'message': 'Subscription successfully canceled'}, status=200)
-        else:
-            return JsonResponse({'message': 'Failed to cancel subscription'}, status=500)
+        return JsonResponse({'message': 'Subscription successfully canceled'}, status=200)
+
 
