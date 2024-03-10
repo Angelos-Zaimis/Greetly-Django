@@ -3,6 +3,8 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from rest_framework.permissions import IsAuthenticated
+
 from custom_user.models import User  # Adjust the import path based on your project structure
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -14,8 +16,11 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 class CreateCheckoutSessionView(APIView):
-
+    permission_classes = [IsAuthenticated]
     def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return Response({'detail': 'Authentication credentials were not provided.'},
+                            status=status.HTTP_401_UNAUTHORIZED)
         body_data = json.loads(request.body.decode('utf-8'))
         if 'priceId' in body_data:
             priceId = body_data['priceId']
@@ -90,7 +95,12 @@ def stripe_webhook(request):
 
 
 class CancelSubscription(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return Response({'detail': 'Authentication credentials were not provided.'},
+                            status=status.HTTP_401_UNAUTHORIZED)
+
         data = json.loads(request.body.decode('utf-8'))
         user_email = data.get('email')
 
