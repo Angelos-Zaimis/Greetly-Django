@@ -35,7 +35,8 @@ class CreateCheckoutSessionView(APIView):
                 'user_email': user_email
             },
             success_url='http://localhost:3000/payments/success',
-            cancel_url='http://localhost:3000/payments/cancel'
+            cancel_url='http://localhost:3000/payments/cancel',
+            invoice_creation={"enabled": True},
         )
 
         data = {
@@ -66,33 +67,29 @@ def stripe_webhook(request):
         )
 
         customer_email = session['customer_details']['email']
-        if session.payment_status == "paid":
-            send_mail(
-                subject="Monthly subscription",
-                message="Thank you very much for your purchase.You monthly subscription is now active.",
-                recipient_list=[customer_email],
-                from_email="www.greetly.ch"
-            )
-            user_email = session['metadata']['user_email']
-            user = User.objects.get(email=user_email)
 
-            user.isSubscribed = True
-            user.product_details['subscription_price'] = session['amount_total']
-            user.product_details['subscription_plan'] = session['line_items']['data'][0]['price']['recurring'][
+
+        send_mail(
+            subject="Monthly subscription",
+            message="Thank you very much for your purchase.You monthly subscription is now active.",
+            recipient_list=[customer_email],
+            from_email="www.greetly.ch"
+        )
+        user_email = session['metadata']['user_email']
+        user = User.objects.get(email=user_email)
+        user.isSubscribed = True
+        user.product_details['subscription_price'] = session['amount_total']
+        user.product_details['subscription_plan'] = session['line_items']['data'][0]['price']['recurring'][
                 'interval']
-            user.product_details['subscription_currency'] = session['line_items']['data'][0]['currency']
-            user.product_details['subscription_id'] = session['subscription']
+        user.product_details['subscription_currency'] = session['line_items']['data'][0]['currency']
+        user.product_details['subscription_id'] = session['subscription']
 
-            user.save()
-
-        elif event['type'] == 'checkout.session.async_payment_failed':
-            session = event['data']['object']
+        user.save()
 
     return Response(status=status.HTTP_200_OK)
 
 
 class CancelSubscription(APIView):
-    permission_classes = [IsAuthenticated]
     def post(self, request, *args, **kwargs):
         data = json.loads(request.body.decode('utf-8'))
         user_email = data.get('email')
