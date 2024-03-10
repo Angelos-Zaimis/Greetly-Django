@@ -55,11 +55,9 @@ def stripe_webhook(request):
             payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
         )
     except ValueError as e:
-        return Response({"message": "Something went wrong with the payment process"},
-                        status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "Something went wrong with the payment process"}, status=status.HTTP_400_BAD_REQUEST)
     except stripe.error.SignatureVerificationError as e:
-        return Response({"message": "Something went wrong with the payment process"},
-                        status=status.HTTP_400_BAD_REQUEST)
+        return  Response({"message": "Something went wrong with the payment process"}, status=status.HTTP_400_BAD_REQUEST)
 
     if event['type'] == 'checkout.session.completed':
         session = stripe.checkout.Session.retrieve(
@@ -86,6 +84,7 @@ def stripe_webhook(request):
         user.save()
 
     return Response({"message": "Webhook received"}, status=status.HTTP_200_OK)
+
 
 
 class CancelSubscription(APIView):
