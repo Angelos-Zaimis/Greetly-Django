@@ -40,7 +40,6 @@ class CreateCheckoutSessionView(APIView):
             },
             success_url='http://localhost:3000/payments/success',
             cancel_url='http://localhost:3000/payments/cancel',
-            invoice_creation={"enabled": True},
         )
 
         data = {
