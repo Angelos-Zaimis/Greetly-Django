@@ -123,5 +123,5 @@ class CancelSubscription(APIView):
 
             return JsonResponse({'message': 'Subscription successfully canceled'}, status=200)
         else:
-            JsonResponse({'message': 'Failed to cancel subscription'}, status=500)
+            return JsonResponse({'message': 'Failed to cancel subscription'}, status=500)
 
