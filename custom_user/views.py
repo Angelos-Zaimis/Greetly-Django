@@ -135,10 +135,6 @@ class UserProvider(APIView):
             return Response({"message": "Users info not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request):
-        if not request.user.is_authenticated:
-            return Response({'detail': 'Authentication credentials were not provided.'},
-                            status=status.HTTP_401_UNAUTHORIZED)
-
         serializer = LanguageSerializerPut(data=request.data)
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data['email']
