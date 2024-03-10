@@ -4,6 +4,7 @@ from django.core.mail import send_mail
 from django.views import View
 import stripe
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -47,6 +48,7 @@ class CreateCheckoutSessionView(APIView):
 
 
 @csrf_exempt
+@require_POST
 def stripe_webhook(request):
     payload = request.body
     sig_header = request.META['HTTP_STRIPE_SIGNATURE']
