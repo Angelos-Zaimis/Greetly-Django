@@ -1,5 +1,5 @@
 from requests import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import get_user_model
@@ -10,18 +10,23 @@ from registration.countries import EU_COUNTRIES, NON_EU_EFTA_COUNTRIES, UK_COUNT
 from project import settings
 from django.core.mail import send_mail
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.response import Response
-
-User = get_user_model()
-
 import random
 import time
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from google.oauth2 import id_token
+from google.auth.transport import requests
+from rest_framework_simplejwt.tokens import AccessToken
+
+User = get_user_model()
 
 
 def generate_code(length=5):
     random.seed(time.time())  # Seed based on the current time
     numbers = '0123456789'
     return ''.join(random.choice(numbers) for _ in range(length))
+
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = UserSerializer
@@ -38,8 +43,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             user.first_login = False
             user.save()
 
+        access = AccessToken.for_user(user)
         refresh = RefreshToken.for_user(user)
-
 
         data = {
             'id': user.id,
@@ -47,7 +52,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             'message': 'Successful login.',
             'username': user.email,
             'tokens': {
-                'access': str(refresh.access_token),
+                'access': str(access),
                 'refresh': str(refresh)
             },
             'first_login': is_first_login,
@@ -105,8 +110,12 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 
 class UserProvider(APIView):
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        if not request.user.is_authenticated:
+            return Response({'detail': 'Authentication credentials were not provided.'},
+                            status=status.HTTP_401_UNAUTHORIZED)
         serializer = UserInfosSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data['email']
@@ -135,6 +144,9 @@ class UserProvider(APIView):
             return Response({"message": "Users info not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request):
+        if not request.user.is_authenticated:
+            return Response({'detail': 'Authentication credentials were not provided.'},
+                            status=status.HTTP_401_UNAUTHORIZED)
         serializer = LanguageSerializerPut(data=request.data)
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data['email']
@@ -200,6 +212,7 @@ class ChangePasswordView(generics.GenericAPIView):
 
         return Response({"message": "Check your emails, you have received a code to change your password"})
 
+
 class ChangePasswordVerify(APIView):
     serializer_class = ChangePasswordVerifySerializer
 
@@ -240,3 +253,27 @@ class UserGoogleExists(TokenObtainPairView):
             return Response({"message": f"{user} exists in the database"}, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({"message": "User doesn't exist in the database"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class GoogleLoginView(APIView):
+    def post(self, request):
+        google_token = request.data.get('googleToken')
+        if not google_token:
+            return Response({'error': 'Google token is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            idinfo = id_token.verify_oauth2_token(google_token, requests.Request())
+            # Here, you can validate idinfo and extract user data
+            # You may want to check if the user exists in your database and create one if needed
+
+            # Check if the user exists in the database based on email
+            user = User.objects.get(email=idinfo['email'])
+
+            # Generate JWT token
+
+            access = AccessToken.for_user(user)
+            refresh = RefreshToken.for_user(user)
+            return Response({'accessToken': str(access), 'refreshToken': str(refresh)},
+                            status=status.HTTP_200_OK)
+        except ValueError:
+            return Response({'error': 'Invalid Google token'}, status=status.HTTP_400_BAD_REQUEST)

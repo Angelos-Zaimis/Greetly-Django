@@ -1,6 +1,6 @@
 from django.urls import path
 from rest_framework_simplejwt import views as jwt_views
-from custom_user.views import CustomTokenObtainPairView,ChangePasswordView,ChangePasswordVerify,UserGoogleExists
+from custom_user.views import CustomTokenObtainPairView,ChangePasswordView,ChangePasswordVerify,UserGoogleExists,GoogleLoginView
 
 
 urlpatterns = [
@@ -11,5 +11,6 @@ urlpatterns = [
          name='token_refresh'),
     path('changePassword/', ChangePasswordView.as_view(), name='change-password'),
     path('changePasswordVerify/', ChangePasswordVerify.as_view(), name='change-password-verify'),
-    path('userExists', UserGoogleExists.as_view(), name='user-exists')
+    path('userExists', UserGoogleExists.as_view(), name='user-exists'),
+    path('google-login/', GoogleLoginView.as_view(), name='google_login'),
 ]
