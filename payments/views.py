@@ -1,15 +1,12 @@
 import json
 from django.conf import settings
 from django.core.mail import send_mail
-from django.views import View
 import stripe
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from rest_framework.response import Response
+from rest_framework import status
 from custom_user.models import User
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
