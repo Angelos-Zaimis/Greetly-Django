@@ -105,11 +105,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 
 class UserProvider(APIView):
-    permission_classes = [IsAuthenticated]
+
     def get(self, request):
-        if not request.user.is_authenticated:
-            return Response({'detail': 'Authentication credentials were not provided.'},
-                            status=status.HTTP_401_UNAUTHORIZED)
         serializer = UserInfosSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data['email']
