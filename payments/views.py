@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 import stripe
+from django.http import JsonResponse
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -55,9 +56,9 @@ def stripe_webhook(request):
             payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
         )
     except ValueError as e:
-        return Response({"message": "Something went wrong with the payment process"}, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({"message": "Something went wrong with the payment process"}, status=400)
     except stripe.error.SignatureVerificationError as e:
-        return  Response({"message": "Something went wrong with the payment process"}, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({"message": "Something went wrong with the payment process"}, status=400)
 
     if event['type'] == 'checkout.session.completed':
         session = stripe.checkout.Session.retrieve(
@@ -83,7 +84,8 @@ def stripe_webhook(request):
 
         user.save()
 
-    return Response({"message": "Webhook received"}, status=status.HTTP_200_OK)
+    return JsonResponse({"message": "Webhook received"}, status=200)
+
 
 
 
