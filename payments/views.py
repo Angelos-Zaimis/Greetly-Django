@@ -15,7 +15,6 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 class CreateCheckoutSessionView(APIView):
-    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         body_data = json.loads(request.body.decode('utf-8'))
