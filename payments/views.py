@@ -3,13 +3,14 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from custom_user.models import User  # Adjust the import path based on your project structure
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from custom_user.models import User  # Adjust the import path based on your project structure
 import stripe
-from rest_framework.views import APIView
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
 
 class CreateCheckoutSessionView(APIView):
 
@@ -54,9 +55,11 @@ def stripe_webhook(request):
             payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
         )
     except ValueError as e:
-        return Response({"message": "Something went wrong with the payment process"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "Something went wrong with the payment process"},
+                        status=status.HTTP_400_BAD_REQUEST)
     except stripe.error.SignatureVerificationError as e:
-        return  Response({"message": "Something went wrong with the payment process"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "Something went wrong with the payment process"},
+                        status=status.HTTP_400_BAD_REQUEST)
 
     if event['type'] == 'checkout.session.completed':
         session = stripe.checkout.Session.retrieve(
