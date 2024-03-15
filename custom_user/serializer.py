@@ -64,7 +64,7 @@ class UserSerializer(serializers.ModelSerializer):
         email = data.get('email')
         password = data.get('password')
 
-        user = authenticate(email=email, password=password)
+        user = authenticate(email=email.lower(), password=password)
         if not user:
             raise serializers.ValidationError({'message': 'Invalid email or password.'})
 
@@ -97,7 +97,7 @@ class ChangePasswordSerializer(serializers.Serializer):
     @staticmethod
     def validate_email(value):
         try:
-            User.objects.get(email=value)
+            User.objects.get(email=value.lower())
         except User.DoesNotExist:
             return Response({'message': 'User with this email does not exist'}, status=status.HTTP_404_NOT_FOUND)
         return value
@@ -112,7 +112,7 @@ class ChangePasswordVerifySerializer(serializers.Serializer):
         email = data.get('email')
         code = data.get('code')
         try:
-            user = User.objects.get(email=email, code=code)
+            user = User.objects.get(email=email.lower(), code=code)
         except User.DoesNotExist:
             raise ValidationError({'message': 'User with this email does not exist or code is wrong'})
         return data
