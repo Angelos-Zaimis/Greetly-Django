@@ -1,5 +1,35 @@
 from django.db import models
 
+CANTON_CHOICES = (
+    ('AG', 'Aargau'),
+    ('AR', 'Appenzell Ausserrhoden'),
+    ('AI', 'Appenzell Innerrhoden'),
+    ('BL', 'Basel-Landschaft'),
+    ('BS', 'Basel-Stadt'),
+    ('BE', 'Bern'),
+    ('FR', 'Fribourg'),
+    ('GE', 'Geneva'),
+    ('GL', 'Glarus'),
+    ('GR', 'Graubünden'),
+    ('JU', 'Jura'),
+    ('LU', 'Lucerne'),
+    ('NE', 'Neuchâtel'),
+    ('NW', 'Nidwalden'),
+    ('OW', 'Obwalden'),
+    ('SG', 'St. Gallen'),
+    ('SH', 'Schaffhausen'),
+    ('SZ', 'Schwyz'),
+    ('SO', 'Solothurn'),
+    ('TG', 'Thurgau'),
+    ('TI', 'Ticino'),
+    ('UR', 'Uri'),
+    ('VS', 'Valais'),
+    ('VD', 'Vaud'),
+    ('ZG', 'Zug'),
+    ('ZH', 'Zurich'),
+)
+
+
 
 class Professionals(models.Model):
     email = models.EmailField(unique=True)
@@ -13,6 +43,7 @@ class Professionals(models.Model):
     latitudeDelta = models.CharField(max_length=50, blank=True)
     longitudeDelta = models.CharField(max_length=50, blank=True)
     linkAddress = models.CharField(max_length=50, blank=True)
+    canton = models.CharField(max_length=20, choices=CANTON_CHOICES, default='')
 
     def __str__(self):
         return self.name

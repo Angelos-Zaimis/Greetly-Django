@@ -13,7 +13,7 @@ class ProfessionalSerializer(serializers.ModelSerializer):
         model = Professionals
         fields = [
             'email', 'name', 'profileImage', 'languages', 'review', 'type',
-            'occupation', 'licensed', 'location', 'specialization', 'aboutMe',
+            'canton','occupation', 'licensed', 'location', 'specialization', 'aboutMe',
             'latitude', 'longitude', 'latitudeDelta', 'longitudeDelta', 'linkAddress'
         ]
 
