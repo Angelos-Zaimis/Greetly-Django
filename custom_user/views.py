@@ -60,6 +60,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             'language': user.language,
             'country': user.country,
             'isSubscribed': user.isSubscribed,
+            'role': user.role,
             'product_details': {
                 'subscription_plan': user.product_details.get('subscription_plan', ''),
                 'subscription_price': user.product_details.get('subscription_price', ''),
@@ -131,6 +132,7 @@ class UserProvider(APIView):
                 'language': user.language,
                 'country': user.country,
                 'isSubscribed': user.isSubscribed,
+                'role': user.role,
                 'product_details': {
                     'subscription_plan': user.product_details.get('subscription_plan', ''),
                     'subscription_price': user.product_details.get('subscription_price', ''),

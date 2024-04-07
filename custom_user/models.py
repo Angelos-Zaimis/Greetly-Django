@@ -14,6 +14,12 @@ def default_product_details():
     return {'subscription_price': '', 'subscription_plan': '', 'subscription_currency': '', 'subscription_id': ''}
 
 
+ROLE_CHOICES = (
+    ('user', 'user'),
+    ('businessOwner', 'businessOwner'),
+)
+
+
 class User(AbstractUser):
     is_active = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
@@ -28,6 +34,7 @@ class User(AbstractUser):
     language = models.CharField(max_length=200, null=True, default='en')
     code = models.IntegerField(default=generate_code)
     product_details = models.JSONField(default=default_product_details)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='')
 
     def __str__(self):
         return f"ID: {self.id} email: {self.email}"
