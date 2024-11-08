@@ -1,34 +1,6 @@
 from django.db import models
 
-CANTON_CHOICES = (
-    ('AG', 'Aargau'),
-    ('AR', 'Appenzell Ausserrhoden'),
-    ('AI', 'Appenzell Innerrhoden'),
-    ('BL', 'Basel-Landschaft'),
-    ('BS', 'Basel-Stadt'),
-    ('BE', 'Bern'),
-    ('FR', 'Fribourg'),
-    ('GE', 'Geneva'),
-    ('GL', 'Glarus'),
-    ('GR', 'Graubünden'),
-    ('JU', 'Jura'),
-    ('LU', 'Lucerne'),
-    ('NE', 'Neuchâtel'),
-    ('NW', 'Nidwalden'),
-    ('OW', 'Obwalden'),
-    ('SG', 'St. Gallen'),
-    ('SH', 'Schaffhausen'),
-    ('SZ', 'Schwyz'),
-    ('SO', 'Solothurn'),
-    ('TG', 'Thurgau'),
-    ('TI', 'Ticino'),
-    ('UR', 'Uri'),
-    ('VS', 'Valais'),
-    ('VD', 'Vaud'),
-    ('ZG', 'Zug'),
-    ('ZH', 'Zurich'),
-)
-
+from professionals.cantons import CANTON_CHOICES
 
 
 class Professionals(models.Model):
@@ -48,7 +20,6 @@ class Professionals(models.Model):
     def __str__(self):
         return self.name
 
-
 class InsuranceAgent(Professionals):
     occupation = models.CharField(max_length=200, default='')
     licensed = models.BooleanField(default=False)
@@ -62,7 +33,6 @@ class InsuranceAgent(Professionals):
 
     def __str__(self):
         return f"{self.occupation} - {self.name}"
-
 
 class ImmigrationConsultant(Professionals):
     occupation = models.CharField(max_length=200, default='')

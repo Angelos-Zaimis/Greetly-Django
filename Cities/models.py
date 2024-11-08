@@ -1,12 +1,10 @@
 from django.db import models
-from django.contrib.postgres.fields import ArrayField
 
 CANTON_CHOICES = (
     ('DE', 'German'),
     ('IT', 'Italian'),
     ('FR', 'French'),
 )
-
 
 class City(models.Model):
     name = models.CharField(max_length=100, blank=False)

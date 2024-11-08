@@ -1,55 +1,14 @@
-import socket
 from rest_framework import serializers, status
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import get_user_model, authenticate
 from django.core.exceptions import ValidationError
-from django.core.validators import EmailValidator
-import re
 from rest_framework.response import Response
 
+from custom_user.countries import EU_COUNTRIES, NON_EU_EFTA_COUNTRIES, UK_COUNTRIES
+from custom_user.languages import COUNTRY_LANGUAGES
+from custom_user.validators import custom_email_validator, custom_password_validator
+
 User = get_user_model()
-
-def custom_email_validator(value):
-    # Check for valid format
-    try:
-        EmailValidator()(value)
-    except ValidationError:
-        raise ValidationError('Invalid email format')
-
-    # Check for invalid characters
-    if re.search(r'[^\w.@+-]', value):
-        raise ValidationError('Email contains invalid characters')
-
-    # Check for missing username or domain
-    if not re.match(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', value):
-        raise ValidationError('Email is missing username or domain')
-
-
-    # Check for email length
-    if len(value) > 254:
-        raise ValidationError('Email address is too long')
-
-    if value.endswith('@example.com'):
-        raise ValidationError('Email address is a known disposable address')
-    if value.endswith('@spamdomain.com'):
-        raise ValidationError('Email address is a known spam address')
-
-
-def custom_password_validator(value):
-    """
-    Check that the password meets custom requirements.
-    """
-    # Example custom password validation rules
-    if len(value) < 8:
-        raise ValidationError('Password must be at least 8 characters long.')
-    if not any(char.isdigit() for char in value):
-        raise ValidationError('Password must contain at least one digit.')
-    if not any(char.isupper() for char in value):
-        raise ValidationError('Password must contain at least one uppercase letter.')
-    if not any(char.islower() for char in value):
-        raise ValidationError('Password must contain at least one lowercase letter.')
-    # Add more custom password validation rules as needed
-
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(validators=[custom_email_validator])
@@ -123,3 +82,74 @@ class UserExistsSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['email']
+
+
+def get_language(country):
+    for item in COUNTRY_LANGUAGES:
+        if item['country'] == country:
+            return item['language']
+    return 'English'
+
+
+class RegisterSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(validators=[custom_email_validator])
+    password = serializers.CharField(validators=[custom_password_validator])
+    selectedCountry = serializers.CharField(required=True)
+    status = serializers.CharField(required=True)
+
+    class Meta:
+        model = User
+        fields = ['email', 'password', 'selectedCountry', 'status']
+
+    def create(self, validated_data):
+        """Create a new user and set citizenship based on the selected country."""
+        country = validated_data.get('selectedCountry')
+        citizenship = self.determine_citizenship(country)
+
+        user = self.create_user(validated_data, country, citizenship)
+        return self.register_user(user)
+
+    # Helper functions
+    @staticmethod
+    def determine_citizenship(country):
+        """Determine the citizenship based on the selected country."""
+        if not country:
+            raise serializers.ValidationError('Country must be provided')
+
+        country_upper = country.upper()
+        if country_upper in EU_COUNTRIES:
+            return 'EU-EFTA'
+        elif country_upper in NON_EU_EFTA_COUNTRIES:
+            return 'NON-EU-EFTA'
+        elif country_upper in UK_COUNTRIES:
+            return 'UK-COUNTRIES'
+        else:
+            raise serializers.ValidationError('Invalid country')
+
+    @staticmethod
+    def create_user(validated_data, country, citizenship):
+        """Create a user instance with the provided validated data."""
+        return User.objects.create_user(
+            username=validated_data['email'],
+            email=validated_data['email'].lower(),
+            password=validated_data['password'],
+            status=validated_data['status'],
+            selectedCitizenship=citizenship,
+            country=country,
+            language=get_language(country),
+            is_active=True
+        )
+
+    @staticmethod
+    def register_user(user):
+        """Create a registration entry for the user."""
+        registration = User.objects.create(user=user)
+        return registration
+
+
+class VerifyRegistrationSerializer(serializers.Serializer):
+    verification_code = serializers.IntegerField(required=True)
+
+    class Meta:
+        model = User
+        fields = ['verification_code']

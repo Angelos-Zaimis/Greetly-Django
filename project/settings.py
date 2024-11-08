@@ -55,7 +55,6 @@ INSTALLED_APPS = [
     "corsheaders",
     'drf_yasg',
     'custom_user',
-    'registration',
     'Cities',
     'bookmark',
     'professionals',

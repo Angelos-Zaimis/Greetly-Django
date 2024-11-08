@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import Professionals
 
-
 class ProfessionalSerializer(serializers.ModelSerializer):
     occupation = serializers.SerializerMethodField()
     licensed = serializers.SerializerMethodField()

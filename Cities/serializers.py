@@ -1,10 +1,5 @@
-from urllib.parse import urljoin
-
-from django.contrib.sites.shortcuts import get_current_site
-
 from Cities.models import City, Category, SubCategory, Information
 from rest_framework import serializers
-
 
 class CitySerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,12 +22,10 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = '__all__'
 
-
 class SubCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = SubCategory
         fields = '__all__'
-
 
 class InformationSerializer(serializers.ModelSerializer):
     class Meta:
