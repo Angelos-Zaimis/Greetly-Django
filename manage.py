@@ -2,13 +2,12 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-
-import dotenv
+from dotenv import load_dotenv
 
 
 
 def main():
-    dotenv.read_dotenv('envs/dev.env')
+    load_dotenv('envs/dev.env')
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'project.settings')
     try:

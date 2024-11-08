@@ -58,10 +58,7 @@ INSTALLED_APPS = [
     'registration',
     'Cities',
     'bookmark',
-    'payments',
-    'translate',
     'professionals',
-
 ]
 
 AUTH_USER_MODEL = 'custom_user.User'

@@ -22,7 +22,7 @@ User = get_user_model()
 
 
 def generate_code(length=5):
-    random.seed(time.time())  # Seed based on the current time
+    random.seed(time.time())
     numbers = '0123456789'
     return ''.join(random.choice(numbers) for _ in range(length))
 

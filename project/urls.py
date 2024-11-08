@@ -1,18 +1,4 @@
-"""project URL Configuration
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.conf.urls.static import static
 from django.urls import path, include
@@ -47,14 +33,8 @@ urlpatterns = [
     path('middleware-info/auth/', include('registration.urls')),
 
     # SWAGGER PATHS
-    path('', schema_view.with_ui('swagger', cache_timeout=0),
-         name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc',
-                                       cache_timeout=0), name='schema-redoc'),
     # GET CITY , CATEGORY,INFORMATION
     path('middleware-info/cities/', include('Cities.urls')),
-
-    path('middleware-info/translateImage/', include('translate.urls')),
 
     # LANGUAGE
     path('middleware-info/userInfo/', UserProvider.as_view(), name='get_userinfo'),
@@ -65,9 +45,8 @@ urlpatterns = [
     # BOOKMARKS
     path('middleware-info/bookmarks/', include('bookmark.urls')),
 
-    # payments
-    path('middleware-info/payments/', include('payments.urls'))
-
+    path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
 ]
 if settings.DEBUG:

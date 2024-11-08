@@ -9,7 +9,6 @@ from rest_framework.response import Response
 
 User = get_user_model()
 
-
 def custom_email_validator(value):
     # Check for valid format
     try:
