@@ -31,7 +31,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserInfosSerializer(serializers.Serializer):
-    email = serializers.EmailField(required=True)
+    user_id = serializers.UUIDField(required=True)
 
     class Meta:
         model = User
@@ -94,22 +94,21 @@ def get_language(country):
 class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(validators=[custom_email_validator])
     password = serializers.CharField(validators=[custom_password_validator])
-    selectedCountry = serializers.CharField(required=True)
+    country = serializers.CharField(required=True)
     status = serializers.CharField(required=True)
 
     class Meta:
         model = User
-        fields = ['email', 'password', 'selectedCountry', 'status']
+        fields = ['email', 'password', 'country', 'status']
 
     def create(self, validated_data):
         """Create a new user and set citizenship based on the selected country."""
-        country = validated_data.get('selectedCountry')
+        country = validated_data.get('country')
         citizenship = self.determine_citizenship(country)
 
         user = self.create_user(validated_data, country, citizenship)
-        return self.register_user(user)
+        return user
 
-    # Helper functions
     @staticmethod
     def determine_citizenship(country):
         """Determine the citizenship based on the selected country."""
@@ -139,12 +138,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             language=get_language(country),
             is_active=True
         )
-
-    @staticmethod
-    def register_user(user):
-        """Create a registration entry for the user."""
-        registration = User.objects.create(user=user)
-        return registration
 
 
 class VerifyRegistrationSerializer(serializers.Serializer):

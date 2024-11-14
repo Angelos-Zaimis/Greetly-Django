@@ -1,11 +1,11 @@
 import random
 import time
-from email.message import EmailMessage
+from venv import logger
 
+from django.core.mail import EmailMessage
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
-from django.template.loader import render_to_string
 from google.auth.transport import requests
 from google.oauth2 import id_token
 from requests import Response
@@ -20,7 +20,7 @@ from custom_user.serializer import UserInfosSerializer, LanguageSerializerPut, C
     ChangePasswordVerifySerializer, UserExistsSerializer, RegisterSerializer
 from project import settings
 from custom_user.countries import EU_COUNTRIES, NON_EU_EFTA_COUNTRIES, UK_COUNTRIES
-
+from django.template.loader import render_to_string
 User = get_user_model()
 
 def generate_code(length=5):
@@ -32,21 +32,24 @@ class UserProvider(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        """Retrieve user information based on email."""
-        if not request.user.is_authenticated:
-            return self.build_unauthenticated_response()
+        try:
+            user_id = self.validate_and_get_id(UserInfosSerializer, request.query_params)
+            if not user_id:
+                logger.error("Invalid or missing user_id in query params")
+                return Response({"error": "Invalid user ID"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error(f"Exception during ID validation: {e}")
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-        email = self.validate_and_get_email(UserInfosSerializer, request.query_params)
-        user = self.get_user_by_email(email)
+        user = self.get_user_by_id(user_id)
+        if not user:
+            logger.error(f"No user found for ID: {user_id}")
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
         response_data = self.build_user_response_data(user)
         return Response(response_data, status=status.HTTP_200_OK)
 
     def put(self, request):
-        """Update user properties like language, status, and country."""
-        if not request.user.is_authenticated:
-            return self.build_unauthenticated_response()
-
         validated_data = self.validate_and_get_data(LanguageSerializerPut, request.data)
         email = validated_data['email']
         user = self.get_user_by_email(email)
@@ -54,19 +57,20 @@ class UserProvider(APIView):
         self.update_user_properties(user, validated_data)
         return Response({"message": "Property updated successfully"}, status=status.HTTP_200_OK)
 
-    # Helper functions
     @staticmethod
-    def build_unauthenticated_response():
-        """Return a response for unauthenticated users."""
-        return Response({'detail': 'Authentication credentials were not provided.'},
-                        status=status.HTTP_401_UNAUTHORIZED)
+    def get_user_by_email(email):
+        """Retrieve a user by email, raising a 404 if not found."""
+        try:
+            return User.objects.get(email=email)
+        except User.DoesNotExist:
+            raise Response({'message': 'User with this email does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
     @staticmethod
-    def validate_and_get_email(serializer_class, data):
+    def validate_and_get_id(serializer_class, data):
         """Validate and return the email from the serializer."""
         serializer = serializer_class(data=data)
         serializer.is_valid(raise_exception=True)
-        return serializer.validated_data['email'].lower()
+        return serializer.validated_data['user_id']
 
     @staticmethod
     def validate_and_get_data(serializer_class, data):
@@ -76,9 +80,9 @@ class UserProvider(APIView):
         return serializer.validated_data
 
     @staticmethod
-    def get_user_by_email(email):
+    def get_user_by_id(user_id):
         """Retrieve a user by email, raising a 404 if not found."""
-        return get_object_or_404(User, email=email)
+        return get_object_or_404(User, id=user_id)
 
     @staticmethod
     def build_user_response_data(user):
@@ -305,19 +309,17 @@ class RegisterView(APIView):
 
     @staticmethod
     def notify_user_registered(user_email):
-        subject = "A new User has been registered"
+        subject = "Welcome to Greetly.ch"
 
-        # Render the HTML template
         html_content = render_to_string('user_registration_notification.html', {
-            'user_email': user_email,
+            'email': user_email,
         })
 
-        # Set up email for HTML content
         email = EmailMessage(
             subject,
             html_content,
             settings.DEFAULT_FROM_EMAIL,
-            ["info@agoimports.ch"]
+            [user_email]
         )
-        email.content_subtype = "html"  # Specify HTML content
+        email.content_subtype = "html"
         email.send(fail_silently=False)

@@ -1,11 +1,18 @@
 from django.urls import path
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
-from custom_user.views import ChangePasswordView, ChangePasswordVerify, UserGoogleExists, GoogleLoginView, RegisterView
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView
+)
+from custom_user.views import ChangePasswordView, ChangePasswordVerify, UserGoogleExists, GoogleLoginView, RegisterView, \
+    UserProvider
 
 urlpatterns = [
-    path('register/', RegisterView.as_view(), name='token_obtain_pair'),
+    path('registration/', RegisterView.as_view(), name='token_obtain_pair'),
 
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+
+    path('user/', UserProvider.as_view(), name='get_userinfo'),
 
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
