@@ -1,4 +1,3 @@
-
 from django.contrib import admin
 from django.conf.urls.static import static
 from django.urls import path, include
@@ -29,15 +28,8 @@ urlpatterns = [
     # GET TOKEN / LOGIN
     path('middleware-info/auth/', include('custom_user.urls')),
 
-    # REGISTRATION
-    path('middleware-info/auth/', include('registration.urls')),
-
-    # SWAGGER PATHS
     # GET CITY , CATEGORY,INFORMATION
     path('middleware-info/cities/', include('Cities.urls')),
-
-    # LANGUAGE
-    path('middleware-info/userInfo/', UserProvider.as_view(), name='get_userinfo'),
 
     # TEAM MEMBERS
     path('middleware-info/professionals/', include('professionals.urls')),

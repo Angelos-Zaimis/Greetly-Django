@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from datetime import timedelta
 from pathlib import Path
-# settings.py
 import dj_database_url
 
 # remainder of file...
@@ -32,17 +31,23 @@ SERVER_TYPE = os.environ.get('SERVER_TYPE', 'development')
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 # settings.py
 
-ALLOWED_HOSTS = ['middleware-information-b3a171d27812.herokuapp.com']
+ALLOWED_HOSTS = [
+    'middleware-info',
+    'localhost',
+    '172.20.10.2',
+    '127.0.0.1',
+    '10.0.2.2'
+]
 
-CORS_ALLOWED_ORIGINS = ['https://middleware-information-b3a171d27812.herokuapp.com']
+CORS_ALLOW_ALL_ORIGINS = True
 
-CSRF_TRUSTED_ORIGINS = ['https://middleware-information-b3a171d27812.herokuapp.com']
-
-if SERVER_TYPE != 'production':
-    ALLOWED_HOSTS += ['middleware-info', 'localhost', '172.20.10.2', '127.0.0.1', '172.20.10.2:*', '172.20.10.2:8081', '10.0.2.2', '10.0.2.2:8081','http://10.0.2.2:8081','http://172.20.10.2:8081']
-    CORS_ALLOW_ALL_ORIGINS = True
-    CSRF_TRUSTED_ORIGINS = ['https://middleware-information-b3a171d27812.herokuapp.com', 'http://localhost:*', 'exp'
-                                                                                                               '://172.20.10', 'http://127.0.0.1:*', 'http://10.0.2.2:8081', 'http://172.20.10.2:8081']
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:*',
+    'exp://172.20.10',
+    'http://127.0.0.1:*',
+    'http://10.0.2.2:8081',
+    'http://172.20.10.2:8081'
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -52,6 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
     "corsheaders",
     'drf_yasg',
     'custom_user',
@@ -79,7 +85,7 @@ ROOT_URLCONF = 'project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -143,21 +149,23 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
-        'rest_framework.renderers.TemplateHTMLRenderer',  # Add any other required renderers
-    ),
-    # 'DEFAULT_PERMISSION_CLASSES': (
-    #     'rest_framework.permissions.IsAuthenticated',
-    #
+        'rest_framework.renderers.TemplateHTMLRenderer',
+    )
 }
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=7),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=90),
-    "ROTATE_REFRESH_TOKENS": True,
-    "BLACKLIST_AFTER_ROTATION": True,
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
 
     "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
     "VERIFYING_KEY": "",
     "AUDIENCE": None,
     "ISSUER": None,
@@ -188,37 +196,9 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.1/howto/static-files/
-
-#
-# STATICFILES_DIRS = (
-#     os.path.join(BASE_DIR, 'static'),
-# )
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
-if SERVER_TYPE == 'production':
-    # production settings
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'  # AWS SDK
-    AWS_ACCESS_KEY_ID = os.environ.get(
-        'DO_SPACES_ACCESS_KEY')  # Spaces access key
-    AWS_SECRET_ACCESS_KEY = os.environ.get(
-        'DO_SPACES_SECRET')  # Spaces access secret
-    AWS_STORAGE_BUCKET_NAME = os.environ.get(
-        'DO_SPACES_SPACE_NAME')  # Name of the space
-    # Endpoint found under Spaces/<your-space>/Settings
-    AWS_S3_ENDPOINT_URL = os.environ.get('DO_SPACES_ENDPOINT')
-    # Full url displayed in Spaces
-    MEDIA_URL = 'https://greetlych.fra1.digitaloceanspaces.com/media/'
-
-else:
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

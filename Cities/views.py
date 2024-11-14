@@ -19,9 +19,6 @@ class GetCitiesBasedOnCategory(APIView):
 
     def get(self, request, *args, **kwargs):
         """Get cities based on the provided region."""
-        if not request.user.is_authenticated:
-            return self.build_unauthenticated_response()
-
         canton_region = request.query_params.get('region')
         if not canton_region:
             return self.build_bad_request_response("The 'region' query parameter cannot be empty.")
@@ -75,11 +72,7 @@ class CityCategoriesAPIView(APIView):
         categories = Category.objects.filter(city=city_obj)
         category_data = self.build_category_data(categories, request)
 
-        response = {
-            'categories': category_data,
-        }
-
-        return Response(response, status=status.HTTP_200_OK)
+        return Response(category_data, status=status.HTTP_200_OK)
 
     # Helper functions
     @staticmethod
@@ -98,24 +91,29 @@ class CityCategoriesAPIView(APIView):
     def build_category_data(self, categories, request):
         """Build and return category data with image URLs."""
         category_data = []
+        first_image_url = None
+        first_tablet_image = None
+
         for category in categories:
             category_data.append({
                 'name': category.name,
                 'icon': category.icon,
-                'description': category.description,
-                'image_url': self.get_image_url(category.image, request),
-                'tablet_image': self.get_image_url(category.table_image, request),
+                'description': category.description
             })
-        return category_data
 
-    @staticmethod
-    def get_image_url(image_field, request):
-        """Generate a full image URL if the image field is present."""
-        if image_field:
-            current_site = get_current_site(request)
-            protocol = 'https' if request.is_secure() else 'http'
-            return urljoin(f"{protocol}://{current_site}", image_field.url)
-        return None
+            # Capture the first image URL and tablet image
+            if first_image_url is None and category.image:
+                first_image_url = category.image
+                first_tablet_image = category.table_image
+
+        # Prepare the final response
+        final_response = {
+            'categories': category_data,
+            'image_url': first_image_url,
+            'tablet_image': first_tablet_image
+        }
+
+        return final_response
 
     @staticmethod
     def build_not_found_response():
